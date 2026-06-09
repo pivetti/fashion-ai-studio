@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { requireCurrentSession } from "@/lib/auth";
 import { getDashboardContext } from "@/lib/dashboard";
@@ -30,6 +31,13 @@ export default async function HistoryPage() {
       model: true,
       creditsUsed: true,
       prompt: true,
+      outputAsset: {
+        select: {
+          fileName: true,
+          mimeType: true,
+          publicUrl: true,
+        },
+      },
     },
   });
 
@@ -55,6 +63,7 @@ export default async function HistoryPage() {
               <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">
                 <tr>
                   <th className="px-5 py-3 font-semibold">Data</th>
+                  <th className="px-5 py-3 font-semibold">Imagem</th>
                   <th className="px-5 py-3 font-semibold">Status</th>
                   <th className="px-5 py-3 font-semibold">Provider/model</th>
                   <th className="px-5 py-3 font-semibold">Creditos</th>
@@ -67,6 +76,25 @@ export default async function HistoryPage() {
                   <tr key={generation.id} className="align-top">
                     <td className="px-5 py-4 text-neutral-600">
                       {formatDate(generation.createdAt)}
+                    </td>
+                    <td className="px-5 py-4">
+                      {generation.outputAsset?.publicUrl &&
+                      generation.outputAsset.mimeType?.startsWith("image/") ? (
+                        <div className="relative h-14 w-14 overflow-hidden rounded-md bg-neutral-100">
+                          <Image
+                            alt={
+                              generation.outputAsset.fileName ??
+                              "Imagem gerada"
+                            }
+                            className="object-cover"
+                            fill
+                            sizes="56px"
+                            src={generation.outputAsset.publicUrl}
+                          />
+                        </div>
+                      ) : (
+                        <span className="text-xs text-neutral-400">-</span>
+                      )}
                     </td>
                     <td className="px-5 py-4">
                       <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">

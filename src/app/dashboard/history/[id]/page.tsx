@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { requireCurrentSession } from "@/lib/auth";
@@ -29,6 +30,9 @@ export default async function GenerationDetailPage({
     where: {
       id,
       organizationId: data.organization.id,
+    },
+    include: {
+      outputAsset: true,
     },
   });
 
@@ -82,6 +86,31 @@ export default async function GenerationDetailPage({
       {generation.errorMessage ? (
         <section className="mt-4 rounded-lg border border-red-200 bg-red-50 p-5 text-sm text-red-700 shadow-sm">
           {generation.errorMessage}
+        </section>
+      ) : null}
+
+      {generation.outputAsset?.publicUrl ? (
+        <section className="mt-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-base font-semibold">Imagem gerada</h2>
+            <Link
+              className="inline-flex h-9 items-center rounded-md border border-neutral-300 px-3 text-sm font-medium transition hover:bg-neutral-100"
+              href={generation.outputAsset.publicUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Abrir imagem
+            </Link>
+          </div>
+          <div className="relative mt-4 aspect-square max-w-2xl overflow-hidden rounded-lg bg-neutral-100">
+            <Image
+              alt={generation.outputAsset.fileName ?? "Imagem gerada"}
+              className="object-cover"
+              fill
+              sizes="(min-width: 1024px) 640px, 90vw"
+              src={generation.outputAsset.publicUrl}
+            />
+          </div>
         </section>
       ) : null}
 

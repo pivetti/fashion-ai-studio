@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
-import { createMockGeneration } from "@/app/dashboard/generate/actions";
+import {
+  createImageGeneration,
+  createMockGeneration,
+} from "@/app/dashboard/generate/actions";
 import {
   bodyTypeOptions,
   eyeColorOptions,
@@ -75,12 +78,17 @@ export function PromptForm() {
   const [prompt, setPrompt] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [generationId, setGenerationId] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [pendingAction, setPendingAction] = useState<"image" | "mock" | null>(
+    null,
+  );
 
   function updateField<T extends keyof FashionPromptInput>(
     field: T,
     value: FashionPromptInput[T],
   ) {
     setErrorMessage("");
+    setSuccessMessage("");
     setInput((current) => ({ ...current, [field]: value }));
   }
 
@@ -88,23 +96,36 @@ export function PromptForm() {
     event.preventDefault();
     setErrorMessage("");
     setGenerationId("");
+    setSuccessMessage("");
     setPrompt(buildFashionPrompt(input));
   }
 
-  function handleMockGeneration() {
+  function handleGeneration(type: "image" | "mock") {
     setErrorMessage("");
     setGenerationId("");
+    setSuccessMessage("");
     setPrompt(buildFashionPrompt(input));
+    setPendingAction(type);
 
     startTransition(async () => {
-      const result = await createMockGeneration(input);
+      const result =
+        type === "image"
+          ? await createImageGeneration(input)
+          : await createMockGeneration(input);
 
       if (!result.ok) {
         setErrorMessage(result.error);
+        setPendingAction(null);
         return;
       }
 
       setGenerationId(result.generationId);
+      setSuccessMessage(
+        type === "image"
+          ? "Imagem gerada e salva com sucesso."
+          : "Geracao mock salva com sucesso.",
+      );
+      setPendingAction(null);
       router.refresh();
     });
   }
@@ -254,7 +275,7 @@ export function PromptForm() {
 
         {generationId ? (
           <div className="rounded-md border border-emerald-400/40 bg-emerald-950/40 px-4 py-3 text-sm leading-6 text-emerald-100">
-            Geracao mock salva com sucesso.{" "}
+            {successMessage}{" "}
             <Link
               className="font-semibold text-emerald-200 underline underline-offset-4"
               href={`/dashboard/history/${generationId}`}
@@ -272,7 +293,7 @@ export function PromptForm() {
           </div>
         ) : null}
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 lg:grid-cols-3">
           <button
             className="h-12 rounded-md border border-amber-300/40 px-5 text-sm font-semibold text-amber-100 transition hover:bg-amber-300 hover:text-neutral-950"
             type="submit"
@@ -282,11 +303,20 @@ export function PromptForm() {
 
           <button
             className="h-12 rounded-md bg-amber-300 px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
-            disabled={isPending}
-            onClick={handleMockGeneration}
+            disabled={isPending || pendingAction !== null}
+            onClick={() => handleGeneration("mock")}
             type="button"
           >
-            {isPending ? "Salvando..." : "Salvar/Gerar Mock"}
+            {pendingAction === "mock" ? "Salvando..." : "Salvar/Gerar Mock"}
+          </button>
+
+          <button
+            className="h-12 rounded-md bg-white px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
+            disabled={isPending || pendingAction !== null}
+            onClick={() => handleGeneration("image")}
+            type="button"
+          >
+            {pendingAction === "image" ? "Gerando..." : "Gerar Imagem"}
           </button>
         </div>
       </form>
