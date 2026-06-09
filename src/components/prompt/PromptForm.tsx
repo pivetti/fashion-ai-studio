@@ -1,6 +1,9 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState, useTransition } from "react";
+import { createMockGeneration } from "@/app/dashboard/generate/actions";
 import {
   bodyTypeOptions,
   eyeColorOptions,
@@ -66,19 +69,44 @@ function SelectField({ label, onChange, options, value }: SelectFieldProps) {
 }
 
 export function PromptForm() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [input, setInput] = useState<FashionPromptInput>(initialInput);
   const [prompt, setPrompt] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [generationId, setGenerationId] = useState("");
 
   function updateField<T extends keyof FashionPromptInput>(
     field: T,
     value: FashionPromptInput[T],
   ) {
+    setErrorMessage("");
     setInput((current) => ({ ...current, [field]: value }));
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrorMessage("");
+    setGenerationId("");
     setPrompt(buildFashionPrompt(input));
+  }
+
+  function handleMockGeneration() {
+    setErrorMessage("");
+    setGenerationId("");
+    setPrompt(buildFashionPrompt(input));
+
+    startTransition(async () => {
+      const result = await createMockGeneration(input);
+
+      if (!result.ok) {
+        setErrorMessage(result.error);
+        return;
+      }
+
+      setGenerationId(result.generationId);
+      router.refresh();
+    });
   }
 
   return (
@@ -218,12 +246,49 @@ export function PromptForm() {
           />
         </label>
 
-        <button
-          className="h-12 w-full rounded-md bg-amber-300 px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-200"
-          type="submit"
-        >
-          Gerar Prompt
-        </button>
+        {errorMessage ? (
+          <div className="rounded-md border border-red-400/40 bg-red-950/40 px-4 py-3 text-sm leading-6 text-red-100">
+            {errorMessage}
+          </div>
+        ) : null}
+
+        {generationId ? (
+          <div className="rounded-md border border-emerald-400/40 bg-emerald-950/40 px-4 py-3 text-sm leading-6 text-emerald-100">
+            Geracao mock salva com sucesso.{" "}
+            <Link
+              className="font-semibold text-emerald-200 underline underline-offset-4"
+              href={`/dashboard/history/${generationId}`}
+            >
+              Ver detalhe
+            </Link>{" "}
+            ou{" "}
+            <Link
+              className="font-semibold text-emerald-200 underline underline-offset-4"
+              href="/dashboard/history"
+            >
+              abrir historico
+            </Link>
+            .
+          </div>
+        ) : null}
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            className="h-12 rounded-md border border-amber-300/40 px-5 text-sm font-semibold text-amber-100 transition hover:bg-amber-300 hover:text-neutral-950"
+            type="submit"
+          >
+            Gerar Prompt
+          </button>
+
+          <button
+            className="h-12 rounded-md bg-amber-300 px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
+            disabled={isPending}
+            onClick={handleMockGeneration}
+            type="button"
+          >
+            {isPending ? "Salvando..." : "Salvar/Gerar Mock"}
+          </button>
+        </div>
       </form>
 
       <PromptPreview prompt={prompt} />

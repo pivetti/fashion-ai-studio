@@ -25,8 +25,8 @@ export default async function GeneratePage() {
             de imagem.
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-neutral-400">
-            Esta etapa apenas cria e copia o prompt. Nenhum credito sera
-            descontado e nenhuma imagem sera salva.
+            Esta etapa salva uma geracao mock no historico e desconta 1 credito,
+            sem chamar API real e sem criar assets de imagem.
           </p>
         </section>
 
@@ -36,7 +36,7 @@ export default async function GeneratePage() {
             {data.credits}
           </p>
           <p className="mt-2 text-xs leading-5 text-neutral-500">
-            Sem desconto nesta versao.
+            O mock consome 1 credito.
           </p>
         </section>
       </div>
