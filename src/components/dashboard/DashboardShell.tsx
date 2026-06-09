@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { logoutAction } from "@/app/dashboard/actions";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 const navigation = [
   { label: "Dashboard", href: "/dashboard" },
@@ -14,6 +16,7 @@ const navigation = [
 type DashboardShellProps = {
   activePath: string;
   children: ReactNode;
+  credits?: number;
   organizationName: string;
   subtitle?: string;
   theme?: "light" | "dark";
@@ -23,28 +26,20 @@ type DashboardShellProps = {
 export function DashboardShell({
   activePath,
   children,
+  credits,
   organizationName,
   subtitle = "Organizacao atual",
-  theme = "light",
   title,
 }: DashboardShellProps) {
-  const isDark = theme === "dark";
-
   return (
-    <main
-      className={
-        isDark
-          ? "min-h-screen bg-neutral-950 text-neutral-100"
-          : "min-h-screen bg-neutral-100 text-neutral-950"
-      }
-    >
+    <main className="min-h-screen bg-[#0a0a0a] text-[#f0e6d0]">
       <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
-        <aside className="border-b border-amber-400/15 bg-neutral-950 px-6 py-5 text-white lg:border-b-0 lg:border-r">
+        <aside className="border-b border-[#1e1e1e] bg-[#0d0d0d] px-5 py-5 text-[#f0e6d0] lg:border-b-0 lg:border-r">
           <div>
-            <p className="text-sm font-medium text-amber-300">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C8A96E]">
               Fashion AI Studio
             </p>
-            <p className="mt-2 text-lg font-semibold leading-6">
+            <p className="mt-3 font-display text-2xl leading-7 text-[#f0e6d0]">
               {organizationName}
             </p>
           </div>
@@ -58,8 +53,8 @@ export function DashboardShell({
                   key={item.href}
                   className={
                     active
-                      ? "rounded-md bg-amber-300 px-3 py-2 font-medium text-neutral-950"
-                      : "rounded-md px-3 py-2 font-medium text-neutral-300 transition hover:bg-white/10 hover:text-white"
+                      ? "rounded-xl border border-[#C8A96E]/40 bg-[#C8A96E]/10 px-3 py-2 font-semibold text-[#C8A96E]"
+                      : "rounded-xl border border-transparent px-3 py-2 font-medium text-[#888] transition hover:border-[#333] hover:bg-[#111] hover:text-[#f0e6d0]"
                   }
                   href={item.href}
                 >
@@ -71,39 +66,29 @@ export function DashboardShell({
         </aside>
 
         <section className="flex min-w-0 flex-col">
-          <header
-            className={
-              isDark
-                ? "flex flex-col gap-4 border-b border-amber-400/15 bg-neutral-950/90 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
-                : "flex flex-col gap-4 border-b border-neutral-200 bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
-            }
-          >
+          <header className="flex flex-col gap-4 border-b border-[#1e1e1e] bg-[#0a0a0a]/95 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-8">
             <div>
-              <p
-                className={
-                  isDark ? "text-sm text-amber-200/70" : "text-sm text-neutral-500"
-                }
-              >
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
                 {subtitle}
               </p>
-              <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+              <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-[#f0e6d0]">
+                {title}
+              </h1>
             </div>
 
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className={
-                  isDark
-                    ? "h-10 rounded-md border border-amber-300/30 px-4 text-sm font-medium text-amber-100 transition hover:bg-amber-300 hover:text-neutral-950"
-                    : "h-10 rounded-md border border-neutral-300 px-4 text-sm font-medium transition hover:bg-neutral-100"
-                }
-              >
-                Sair
-              </button>
-            </form>
+            <div className="flex items-center gap-3">
+              {typeof credits === "number" ? (
+                <Badge>{credits} creditos</Badge>
+              ) : null}
+              <form action={logoutAction}>
+                <Button type="submit" variant="secondary">
+                  Sair
+                </Button>
+              </form>
+            </div>
           </header>
 
-          <div className="flex-1 px-6 py-8">{children}</div>
+          <div className="flex-1 px-5 py-8 lg:px-8">{children}</div>
         </section>
       </div>
     </main>

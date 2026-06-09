@@ -2,6 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { Badge } from "@/components/ui/Badge";
+import { buttonClassName } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { requireCurrentSession } from "@/lib/auth";
 import { getDashboardContext } from "@/lib/dashboard";
 import { prisma } from "@/lib/prisma";
@@ -43,12 +47,13 @@ export default async function GenerationDetailPage({
   return (
     <DashboardShell
       activePath="/dashboard/history"
+      credits={data.credits}
       organizationName={data.organization.name}
       title="Detalhe da geracao"
     >
       <div className="mb-4">
         <Link
-          className="text-sm font-medium text-teal-700 hover:text-teal-900"
+          className="text-sm font-semibold text-[#C8A96E] hover:text-[#d8bd83]"
           href="/dashboard/history"
         >
           Voltar para o historico
@@ -56,45 +61,65 @@ export default async function GenerationDetailPage({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-4">
-        <section className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-neutral-500">Status</p>
-          <p className="mt-3 text-xl font-semibold">{generation.status}</p>
-        </section>
+        <Card>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
+            Status
+          </p>
+          <div className="mt-4">
+            <Badge
+              tone={
+                generation.status === "FAILED"
+                  ? "red"
+                  : generation.status === "COMPLETED"
+                    ? "green"
+                    : "gold"
+              }
+            >
+              {generation.status}
+            </Badge>
+          </div>
+        </Card>
 
-        <section className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-neutral-500">Provider/model</p>
-          <p className="mt-3 text-xl font-semibold">
+        <Card>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
+            Provider/model
+          </p>
+          <p className="mt-4 text-xl font-semibold text-[#f0e6d0]">
             {generation.provider ?? "OTHER"} / {generation.model ?? "mock"}
           </p>
-        </section>
+        </Card>
 
-        <section className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-neutral-500">Creditos usados</p>
-          <p className="mt-3 text-xl font-semibold">
+        <Card>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
+            Creditos usados
+          </p>
+          <p className="mt-4 font-display text-3xl font-semibold text-[#C8A96E]">
             {generation.creditsUsed}
           </p>
-        </section>
+        </Card>
 
-        <section className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-neutral-500">Criada em</p>
-          <p className="mt-3 text-xl font-semibold">
+        <Card>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
+            Criada em
+          </p>
+          <p className="mt-4 text-xl font-semibold text-[#f0e6d0]">
             {formatDate(generation.createdAt)}
           </p>
-        </section>
+        </Card>
       </div>
 
       {generation.errorMessage ? (
-        <section className="mt-4 rounded-lg border border-red-200 bg-red-50 p-5 text-sm text-red-700 shadow-sm">
+        <section className="mt-4 rounded-2xl border border-red-400/30 bg-red-950/40 p-5 text-sm text-red-100">
           {generation.errorMessage}
         </section>
       ) : null}
 
       {generation.outputAsset?.publicUrl ? (
-        <section className="mt-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+        <Card className="mt-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-semibold">Imagem gerada</h2>
+            <SectionTitle index="01">Imagem gerada</SectionTitle>
             <Link
-              className="inline-flex h-9 items-center rounded-md border border-neutral-300 px-3 text-sm font-medium transition hover:bg-neutral-100"
+              className={buttonClassName("secondary")}
               href={generation.outputAsset.publicUrl}
               rel="noopener noreferrer"
               target="_blank"
@@ -102,7 +127,7 @@ export default async function GenerationDetailPage({
               Abrir imagem
             </Link>
           </div>
-          <div className="relative mt-4 aspect-square max-w-2xl overflow-hidden rounded-lg bg-neutral-100">
+          <div className="relative mt-5 aspect-square max-w-2xl overflow-hidden rounded-2xl border border-[#1e1e1e] bg-[#0d0d0d]">
             <Image
               alt={generation.outputAsset.fileName ?? "Imagem gerada"}
               className="object-cover"
@@ -111,22 +136,22 @@ export default async function GenerationDetailPage({
               src={generation.outputAsset.publicUrl}
             />
           </div>
-        </section>
+        </Card>
       ) : null}
 
-      <section className="mt-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-        <h2 className="text-base font-semibold">Prompt completo</h2>
-        <pre className="mt-4 whitespace-pre-wrap break-words rounded-md bg-neutral-950 p-4 font-sans text-sm leading-7 text-neutral-100">
+      <Card className="mt-4">
+        <SectionTitle index="02">Prompt completo</SectionTitle>
+        <pre className="mt-5 whitespace-pre-wrap break-words rounded-2xl border border-[#1e1e1e] bg-[#0d0d0d] p-4 font-sans text-sm leading-7 text-[#e0d5c5]">
           {generation.prompt}
         </pre>
-      </section>
+      </Card>
 
-      <section className="mt-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-        <h2 className="text-base font-semibold">Input data</h2>
-        <pre className="mt-4 overflow-x-auto rounded-md bg-neutral-950 p-4 text-sm leading-7 text-neutral-100">
+      <Card className="mt-4">
+        <SectionTitle index="03">Input data</SectionTitle>
+        <pre className="mt-5 overflow-x-auto rounded-2xl border border-[#1e1e1e] bg-[#0d0d0d] p-4 text-sm leading-7 text-[#e0d5c5]">
           {JSON.stringify(generation.inputData, null, 2)}
         </pre>
-      </section>
+      </Card>
     </DashboardShell>
   );
 }

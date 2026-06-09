@@ -19,13 +19,18 @@ export async function DashboardPlaceholder({
   return (
     <DashboardShell
       activePath={activePath}
+      credits={data.credits}
       organizationName={data.organization.name}
       title={title}
     >
-      <section className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-neutral-500">Em breve</p>
-        <h2 className="mt-2 text-xl font-semibold">{title}</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600">
+      <section className="rounded-2xl border border-[#1e1e1e] bg-[#111] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.28)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#C8A96E]">
+          Em breve
+        </p>
+        <h2 className="mt-3 font-display text-2xl font-semibold text-[#f0e6d0]">
+          {title}
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[#888]">
           {description}
         </p>
       </section>

@@ -2,6 +2,9 @@ import { AssetType } from "@prisma/client";
 import Link from "next/link";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { PromptForm } from "@/components/prompt/PromptForm";
+import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/Card";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 import { requireCurrentSession } from "@/lib/auth";
 import { getDashboardContext } from "@/lib/dashboard";
 import { prisma } from "@/lib/prisma";
@@ -28,47 +31,49 @@ export default async function GeneratePage() {
   return (
     <DashboardShell
       activePath="/dashboard/generate"
+      credits={data.credits}
       organizationName={data.organization.name}
       subtitle="Gerador de prompt"
       theme="dark"
       title="Gerar Imagem"
     >
-      <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
-        <section className="rounded-lg border border-amber-300/20 bg-neutral-900 p-5 shadow-2xl shadow-black/20">
-          <p className="text-sm font-medium text-amber-300">
+      <div className="mb-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px]">
+        <Card>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C8A96E]">
             Prompt profissional de moda
           </p>
-          <h2 className="mt-2 max-w-3xl text-2xl font-semibold tracking-tight text-white">
+          <h2 className="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-[#f0e6d0]">
             Monte uma direcao fotografica completa antes de conectar a geracao
             de imagem.
           </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-neutral-400">
-            Esta etapa salva uma geracao mock no historico e desconta 1 credito,
-            sem chamar API real e sem criar assets de imagem.
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-[#888]">
+            Gere o prompt, salve uma geracao mock ou acione o provider de imagem
+            configurado. Quando a imagem real for gerada, ela tambem entra na
+            biblioteca de assets.
           </p>
-        </section>
+        </Card>
 
-        <section className="rounded-lg border border-amber-300/20 bg-neutral-900 p-5 shadow-2xl shadow-black/20">
-          <p className="text-sm text-neutral-400">Creditos disponiveis</p>
-          <p className="mt-3 text-3xl font-semibold text-amber-300">
+        <Card>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
+            Creditos
+          </p>
+          <p className="mt-3 font-display text-5xl font-semibold text-[#C8A96E]">
             {data.credits}
           </p>
-          <p className="mt-2 text-xs leading-5 text-neutral-500">
-            O mock consome 1 credito.
+          <p className="mt-3 text-xs leading-5 text-[#666]">
+            Mock e imagem consomem 1 credito.
           </p>
-        </section>
+        </Card>
       </div>
 
-      <section className="mb-6 rounded-lg border border-amber-300/20 bg-neutral-900 p-5 shadow-2xl shadow-black/20">
+      <Card className="mb-6">
+        <SectionTitle index="00">Referencia de roupa</SectionTitle>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <p className="text-sm font-medium text-amber-300">
-              Referencia de roupa
-            </p>
-            <h2 className="mt-1 text-xl font-semibold text-white">
+            <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
               Selecao de asset preparada para a proxima etapa
             </h2>
-            <p className="mt-2 text-sm leading-6 text-neutral-400">
+            <p className="mt-3 text-sm leading-6 text-[#888]">
               Os assets enviados ja ficam disponiveis para futuramente alimentar
               a geracao real. Nesta versao, a selecao ainda nao entra no prompt
               nem cria imagens.
@@ -77,11 +82,11 @@ export default async function GeneratePage() {
 
           <div className="w-full lg:max-w-sm">
             <label className="space-y-2">
-              <span className="text-sm font-medium text-amber-100">
+              <span className="text-sm font-medium text-[#e0d5c5]">
                 Asset de referencia
               </span>
               <select
-                className="h-11 w-full rounded-md border border-white/10 bg-neutral-950 px-3 text-sm text-neutral-500 outline-none"
+                className="h-11 w-full rounded-xl border border-[#2a2a2a] bg-[#0d0d0d] px-3 text-sm text-[#666] outline-none"
                 disabled
               >
                 {referenceAssets.length > 0 ? (
@@ -95,15 +100,18 @@ export default async function GeneratePage() {
                 )}
               </select>
             </label>
+            <div className="mt-3">
+              <Badge tone="neutral">Preparado para versao futura</Badge>
+            </div>
             <Link
-              className="mt-3 inline-flex text-sm font-medium text-amber-300 hover:text-amber-200"
+              className="mt-3 inline-flex text-sm font-semibold text-[#C8A96E] hover:text-[#d8bd83]"
               href="/dashboard/assets"
             >
               Enviar assets
             </Link>
           </div>
         </div>
-      </section>
+      </Card>
 
       <PromptForm />
     </DashboardShell>

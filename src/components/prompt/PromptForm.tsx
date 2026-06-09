@@ -7,6 +7,10 @@ import {
   createImageGeneration,
   createMockGeneration,
 } from "@/app/dashboard/generate/actions";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Textarea } from "@/components/ui/Textarea";
 import {
   bodyTypeOptions,
   eyeColorOptions,
@@ -55,9 +59,9 @@ type SelectFieldProps = {
 function SelectField({ label, onChange, options, value }: SelectFieldProps) {
   return (
     <label className="space-y-2">
-      <span className="text-sm font-medium text-amber-100">{label}</span>
+      <span className="text-sm font-medium text-[#e0d5c5]">{label}</span>
       <select
-        className="h-11 w-full rounded-md border border-white/10 bg-neutral-950 px-3 text-sm text-neutral-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
+        className="h-11 w-full rounded-xl border border-[#2a2a2a] bg-[#0d0d0d] px-3 text-sm text-[#f0e6d0] outline-none transition focus:border-[#C8A96E] focus:ring-2 focus:ring-[#C8A96E]/15"
         onChange={(event) => onChange(event.target.value)}
         value={value}
       >
@@ -132,15 +136,14 @@ export function PromptForm() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)]">
-      <form
-        className="space-y-6 rounded-lg border border-amber-300/20 bg-neutral-900 p-5 shadow-2xl shadow-black/20"
+      <Card
+        as="form"
+        className="space-y-7"
         onSubmit={handleSubmit}
       >
-        <div className="border-b border-white/10 pb-5">
-          <p className="text-sm font-medium text-amber-300">
-            Direcao de modelo
-          </p>
-          <h2 className="mt-1 text-xl font-semibold text-white">
+        <div>
+          <SectionTitle index="01">Direcao de modelo</SectionTitle>
+          <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
             Aparencia e styling
           </h2>
         </div>
@@ -240,11 +243,11 @@ export function PromptForm() {
         </div>
 
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-amber-100">
+          <span className="text-sm font-medium text-[#e0d5c5]">
             Descricao da roupa
           </span>
-          <textarea
-            className="min-h-28 w-full resize-y rounded-md border border-white/10 bg-neutral-950 px-3 py-3 text-sm leading-6 text-neutral-100 outline-none transition placeholder:text-neutral-600 focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
+          <Textarea
+            className="min-h-28"
             onChange={(event) =>
               updateField("clothingDesc", event.target.value)
             }
@@ -254,11 +257,11 @@ export function PromptForm() {
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-amber-100">
+          <span className="text-sm font-medium text-[#e0d5c5]">
             Detalhes extras
           </span>
-          <textarea
-            className="min-h-24 w-full resize-y rounded-md border border-white/10 bg-neutral-950 px-3 py-3 text-sm leading-6 text-neutral-100 outline-none transition placeholder:text-neutral-600 focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
+          <Textarea
+            className="min-h-24"
             onChange={(event) =>
               updateField("extraDetails", event.target.value)
             }
@@ -268,13 +271,13 @@ export function PromptForm() {
         </label>
 
         {errorMessage ? (
-          <div className="rounded-md border border-red-400/40 bg-red-950/40 px-4 py-3 text-sm leading-6 text-red-100">
+          <div className="rounded-xl border border-red-400/40 bg-red-950/40 px-4 py-3 text-sm leading-6 text-red-100">
             {errorMessage}
           </div>
         ) : null}
 
         {generationId ? (
-          <div className="rounded-md border border-emerald-400/40 bg-emerald-950/40 px-4 py-3 text-sm leading-6 text-emerald-100">
+          <div className="rounded-xl border border-emerald-400/40 bg-emerald-950/40 px-4 py-3 text-sm leading-6 text-emerald-100">
             {successMessage}{" "}
             <Link
               className="font-semibold text-emerald-200 underline underline-offset-4"
@@ -294,32 +297,30 @@ export function PromptForm() {
         ) : null}
 
         <div className="grid gap-3 lg:grid-cols-3">
-          <button
-            className="h-12 rounded-md border border-amber-300/40 px-5 text-sm font-semibold text-amber-100 transition hover:bg-amber-300 hover:text-neutral-950"
+          <Button
             type="submit"
+            variant="secondary"
           >
             Gerar Prompt
-          </button>
+          </Button>
 
-          <button
-            className="h-12 rounded-md bg-amber-300 px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
+          <Button
             disabled={isPending || pendingAction !== null}
             onClick={() => handleGeneration("mock")}
             type="button"
           >
             {pendingAction === "mock" ? "Salvando..." : "Salvar/Gerar Mock"}
-          </button>
+          </Button>
 
-          <button
-            className="h-12 rounded-md bg-white px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
+          <Button
             disabled={isPending || pendingAction !== null}
             onClick={() => handleGeneration("image")}
             type="button"
           >
             {pendingAction === "image" ? "Gerando..." : "Gerar Imagem"}
-          </button>
+          </Button>
         </div>
-      </form>
+      </Card>
 
       <PromptPreview prompt={prompt} />
     </div>

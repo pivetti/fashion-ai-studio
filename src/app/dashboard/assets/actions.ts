@@ -3,17 +3,18 @@
 import { AssetType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import {
+  ACCEPTED_IMAGE_MIME_TYPES,
+  MAX_ASSET_UPLOAD_MB,
+  MAX_ASSET_UPLOAD_BYTES,
+} from "@/lib/asset-upload";
 import { requireCurrentSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteFile, saveFile } from "@/lib/storage";
 
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-const ACCEPTED_IMAGE_MIME_TYPES = new Set([
-  "image/gif",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+const ACCEPTED_IMAGE_MIME_TYPE_SET = new Set<string>(
+  ACCEPTED_IMAGE_MIME_TYPES,
+);
 
 const ALLOWED_ASSET_TYPES = new Set<AssetType>([
   AssetType.CLOTHING_REFERENCE,
@@ -57,12 +58,14 @@ function getImageFile(formData: FormData) {
     redirectWithAssetError("Selecione uma imagem para enviar.");
   }
 
-  if (!ACCEPTED_IMAGE_MIME_TYPES.has(value.type)) {
+  if (!ACCEPTED_IMAGE_MIME_TYPE_SET.has(value.type)) {
     redirectWithAssetError("Envie apenas imagens PNG, JPG, WebP ou GIF.");
   }
 
-  if (value.size > MAX_FILE_SIZE_BYTES) {
-    redirectWithAssetError("A imagem precisa ter no maximo 5MB.");
+  if (value.size > MAX_ASSET_UPLOAD_BYTES) {
+    redirectWithAssetError(
+      `A imagem precisa ter no maximo ${MAX_ASSET_UPLOAD_MB}MB.`,
+    );
   }
 
   return value;

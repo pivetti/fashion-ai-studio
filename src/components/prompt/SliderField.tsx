@@ -20,16 +20,16 @@ export function SliderField({
   value,
 }: SliderFieldProps) {
   return (
-    <label className="block rounded-lg border border-white/10 bg-white/5 p-4">
-      <span className="flex items-center justify-between gap-4 text-sm font-medium text-amber-100">
+    <label className="block rounded-2xl border border-[#1e1e1e] bg-[#0d0d0d] p-4">
+      <span className="flex items-center justify-between gap-4 text-sm font-medium text-[#e0d5c5]">
         {label}
-        <span className="rounded-md bg-neutral-950 px-2 py-1 text-xs text-amber-200">
+        <span className="rounded-full border border-[#C8A96E]/25 bg-[#C8A96E]/10 px-3 py-1 text-xs text-[#C8A96E]">
           {value}
           {suffix}
         </span>
       </span>
       <input
-        className="mt-4 w-full accent-amber-300"
+        className="mt-4 w-full"
         max={max}
         min={min}
         onChange={(event) => onChange(Number(event.target.value))}

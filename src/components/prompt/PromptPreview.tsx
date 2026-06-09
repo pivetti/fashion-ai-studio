@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { SectionTitle } from "@/components/ui/SectionTitle";
 
 type PromptPreviewProps = {
   prompt: string;
@@ -21,35 +24,37 @@ export function PromptPreview({ prompt }: PromptPreviewProps) {
   }
 
   return (
-    <section className="rounded-lg border border-amber-300/20 bg-neutral-900 p-5 shadow-2xl shadow-black/20">
-      <div className="flex flex-col gap-4 border-b border-white/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
+    <Card>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-amber-300">Prompt gerado</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Preview</h2>
+          <SectionTitle index="05">Prompt gerado</SectionTitle>
+          <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
+            Preview
+          </h2>
         </div>
 
-        <button
-          className="h-10 rounded-md border border-amber-300/40 px-4 text-sm font-medium text-amber-100 transition hover:bg-amber-300 hover:text-neutral-950 disabled:cursor-not-allowed disabled:border-white/10 disabled:text-neutral-500 disabled:hover:bg-transparent"
+        <Button
           disabled={!hasPrompt}
           onClick={copyPrompt}
           type="button"
+          variant="secondary"
         >
           {copied ? "Copiado" : "Copiar prompt"}
-        </button>
+        </Button>
       </div>
 
-      <div className="mt-5 min-h-[320px] rounded-lg border border-white/10 bg-neutral-950 p-4">
+      <div className="mt-5 min-h-[320px] rounded-2xl border border-[#C8A96E]/20 bg-[#0d0d0d] p-4">
         {hasPrompt ? (
-          <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-neutral-100">
+          <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-[#e0d5c5]">
             {prompt}
           </pre>
         ) : (
-          <div className="flex min-h-[288px] items-center justify-center text-center text-sm leading-6 text-neutral-500">
+          <div className="flex min-h-[288px] items-center justify-center text-center text-sm leading-6 text-[#666]">
             Preencha o formulario e clique em Gerar Prompt para visualizar a
             direcao fotografica.
           </div>
         )}
       </div>
-    </section>
+    </Card>
   );
 }
