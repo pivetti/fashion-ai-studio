@@ -1,0 +1,232 @@
+"use client";
+
+import { type FormEvent, useState } from "react";
+import {
+  bodyTypeOptions,
+  eyeColorOptions,
+  genderOptions,
+  hairColorOptions,
+  hairStyleOptions,
+  skinToneOptions,
+} from "@/data/prompt/appearance";
+import { cameras } from "@/data/prompt/cameras";
+import { lenses } from "@/data/prompt/lenses";
+import { lightings } from "@/data/prompt/lightings";
+import { positions } from "@/data/prompt/positions";
+import { buildFashionPrompt } from "@/lib/prompt-builder";
+import type { FashionPromptInput, PromptOption } from "@/types/prompt";
+import { OptionToggle } from "./OptionToggle";
+import { PromptPreview } from "./PromptPreview";
+import { SliderField } from "./SliderField";
+
+const initialInput: FashionPromptInput = {
+  gender: genderOptions[0].value,
+  height: 172,
+  weight: 62,
+  age: 28,
+  skinTone: skinToneOptions[1].value,
+  hairColor: hairColorOptions[1].value,
+  hairStyle: hairStyleOptions[1].value,
+  eyeColor: eyeColorOptions[0].value,
+  bodyType: bodyTypeOptions[4].value,
+  camera: cameras[0].value,
+  lens: lenses[1].value,
+  position: positions[0].value,
+  lighting: lightings[0].value,
+  clothingDesc:
+    "a tailored black blazer, satin top, high-waisted trousers, minimal gold accessories, polished luxury styling",
+  extraDetails:
+    "neutral studio background, premium ecommerce campaign, emphasis on fabric texture and garment fit",
+};
+
+type SelectFieldProps = {
+  label: string;
+  onChange: (value: string) => void;
+  options: PromptOption[];
+  value: string;
+};
+
+function SelectField({ label, onChange, options, value }: SelectFieldProps) {
+  return (
+    <label className="space-y-2">
+      <span className="text-sm font-medium text-amber-100">{label}</span>
+      <select
+        className="h-11 w-full rounded-md border border-white/10 bg-neutral-950 px-3 text-sm text-neutral-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+export function PromptForm() {
+  const [input, setInput] = useState<FashionPromptInput>(initialInput);
+  const [prompt, setPrompt] = useState("");
+
+  function updateField<T extends keyof FashionPromptInput>(
+    field: T,
+    value: FashionPromptInput[T],
+  ) {
+    setInput((current) => ({ ...current, [field]: value }));
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPrompt(buildFashionPrompt(input));
+  }
+
+  return (
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)]">
+      <form
+        className="space-y-6 rounded-lg border border-amber-300/20 bg-neutral-900 p-5 shadow-2xl shadow-black/20"
+        onSubmit={handleSubmit}
+      >
+        <div className="border-b border-white/10 pb-5">
+          <p className="text-sm font-medium text-amber-300">
+            Direcao de modelo
+          </p>
+          <h2 className="mt-1 text-xl font-semibold text-white">
+            Aparencia e styling
+          </h2>
+        </div>
+
+        <OptionToggle
+          label="Genero"
+          onChange={(value) => updateField("gender", value)}
+          options={genderOptions}
+          value={input.gender}
+        />
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <SliderField
+            label="Idade"
+            max={70}
+            min={16}
+            onChange={(value) => updateField("age", value)}
+            suffix=" anos"
+            value={input.age}
+          />
+          <SliderField
+            label="Altura"
+            max={205}
+            min={145}
+            onChange={(value) => updateField("height", value)}
+            suffix=" cm"
+            value={input.height}
+          />
+          <SliderField
+            label="Peso"
+            max={130}
+            min={40}
+            onChange={(value) => updateField("weight", value)}
+            suffix=" kg"
+            value={input.weight}
+          />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <SelectField
+            label="Tom de pele"
+            onChange={(value) => updateField("skinTone", value)}
+            options={skinToneOptions}
+            value={input.skinTone}
+          />
+          <SelectField
+            label="Tipo fisico"
+            onChange={(value) => updateField("bodyType", value)}
+            options={bodyTypeOptions}
+            value={input.bodyType}
+          />
+          <SelectField
+            label="Cor do cabelo"
+            onChange={(value) => updateField("hairColor", value)}
+            options={hairColorOptions}
+            value={input.hairColor}
+          />
+          <SelectField
+            label="Estilo do cabelo"
+            onChange={(value) => updateField("hairStyle", value)}
+            options={hairStyleOptions}
+            value={input.hairStyle}
+          />
+          <SelectField
+            label="Cor dos olhos"
+            onChange={(value) => updateField("eyeColor", value)}
+            options={eyeColorOptions}
+            value={input.eyeColor}
+          />
+          <SelectField
+            label="Pose"
+            onChange={(value) => updateField("position", value)}
+            options={positions}
+            value={input.position}
+          />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <SelectField
+            label="Camera"
+            onChange={(value) => updateField("camera", value)}
+            options={cameras}
+            value={input.camera}
+          />
+          <SelectField
+            label="Lente"
+            onChange={(value) => updateField("lens", value)}
+            options={lenses}
+            value={input.lens}
+          />
+          <SelectField
+            label="Iluminacao"
+            onChange={(value) => updateField("lighting", value)}
+            options={lightings}
+            value={input.lighting}
+          />
+        </div>
+
+        <label className="block space-y-2">
+          <span className="text-sm font-medium text-amber-100">
+            Descricao da roupa
+          </span>
+          <textarea
+            className="min-h-28 w-full resize-y rounded-md border border-white/10 bg-neutral-950 px-3 py-3 text-sm leading-6 text-neutral-100 outline-none transition placeholder:text-neutral-600 focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
+            onChange={(event) =>
+              updateField("clothingDesc", event.target.value)
+            }
+            placeholder="Ex: blazer oversized, calca de alfaiataria, bolsa estruturada..."
+            value={input.clothingDesc}
+          />
+        </label>
+
+        <label className="block space-y-2">
+          <span className="text-sm font-medium text-amber-100">
+            Detalhes extras
+          </span>
+          <textarea
+            className="min-h-24 w-full resize-y rounded-md border border-white/10 bg-neutral-950 px-3 py-3 text-sm leading-6 text-neutral-100 outline-none transition placeholder:text-neutral-600 focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
+            onChange={(event) =>
+              updateField("extraDetails", event.target.value)
+            }
+            placeholder="Ex: fundo minimalista, campanha premium, textura do tecido..."
+            value={input.extraDetails}
+          />
+        </label>
+
+        <button
+          className="h-12 w-full rounded-md bg-amber-300 px-5 text-sm font-semibold text-neutral-950 transition hover:bg-amber-200"
+          type="submit"
+        >
+          Gerar Prompt
+        </button>
+      </form>
+
+      <PromptPreview prompt={prompt} />
+    </div>
+  );
+}
