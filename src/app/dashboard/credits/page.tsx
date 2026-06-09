@@ -4,7 +4,7 @@ export default async function CreditsPage() {
   return await DashboardPlaceholder({
     activePath: "/dashboard/credits",
     description:
-      "Extrato, compra e consumo de creditos serao exibidos aqui quando o billing for implementado.",
+      "Acompanhe futuramente o saldo do studio, consumo por campanha e pacotes adicionais.",
     title: "Creditos",
   });
 }

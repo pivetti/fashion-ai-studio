@@ -14,8 +14,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Fashion AI Studio",
-  description: "SaaS multi-tenant para criacao de conteudo de moda com IA.",
+  title: "Betume Studio",
+  description: "Estudio editorial para campanhas visuais de moda.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${dmSans.variable} ${playfair.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0a0a0a] text-[#f0e6d0]">
+      <body className="min-h-full flex flex-col bg-[#080807] text-[#F4EBDD]">
         {children}
       </body>
     </html>

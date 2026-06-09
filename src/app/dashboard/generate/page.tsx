@@ -5,6 +5,7 @@ import { PromptForm } from "@/components/prompt/PromptForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Select } from "@/components/ui/Select";
 import { requireCurrentSession } from "@/lib/auth";
 import { getDashboardContext } from "@/lib/dashboard";
 import { prisma } from "@/lib/prisma";
@@ -33,62 +34,52 @@ export default async function GeneratePage() {
       activePath="/dashboard/generate"
       credits={data.credits}
       organizationName={data.organization.name}
-      subtitle="Gerador de prompt"
+      subtitle="Campanha"
       theme="dark"
-      title="Gerar Imagem"
+      title="Criar Imagens"
     >
-      <div className="mb-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px]">
-        <Card>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C8A96E]">
-            Prompt profissional de moda
-          </p>
-          <h2 className="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-[#f0e6d0]">
-            Monte uma direcao fotografica completa antes de conectar a geracao
-            de imagem.
+      <div className="mb-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px]">
+        <Card variant="elevated">
+          <Badge tone="gold">Editorial Studio</Badge>
+          <h2 className="mt-4 max-w-3xl font-display text-4xl font-semibold tracking-tight text-[#F4EBDD]">
+            Crie uma campanha com direcao fotografica clara.
           </h2>
-          <p className="mt-4 max-w-3xl text-sm leading-6 text-[#888]">
-            Gere o prompt, salve uma geracao mock ou acione o provider de imagem
-            configurado. Quando a imagem real for gerada, ela tambem entra na
-            biblioteca de assets.
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-[#A9A096]">
+            Defina peça, casting, luz e lente. O motor de imagem entra no fim,
+            quando o briefing estiver pronto.
           </p>
         </Card>
 
-        <Card>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
-            Creditos
-          </p>
-          <p className="mt-3 font-display text-5xl font-semibold text-[#C8A96E]">
+        <Card variant="soft">
+          <p className="text-sm font-medium text-[#A9A096]">Creditos</p>
+          <p className="mt-3 font-display text-5xl font-semibold text-[#E3C98A]">
             {data.credits}
           </p>
-          <p className="mt-3 text-xs leading-5 text-[#666]">
-            Mock e imagem consomem 1 credito.
+          <p className="mt-3 text-xs leading-5 text-[#6F6A63]">
+            Mock e campanha gerada consomem 1 credito.
           </p>
         </Card>
       </div>
 
-      <Card className="mb-6">
-        <SectionTitle index="00">Referencia de roupa</SectionTitle>
+      <Card className="mb-6" variant="soft">
+        <SectionTitle index="00">Pecas de referencia</SectionTitle>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
-              Selecao de asset preparada para a proxima etapa
+            <h2 className="mt-5 font-display text-2xl font-semibold text-[#F4EBDD]">
+              Biblioteca pronta para o proximo corte
             </h2>
-            <p className="mt-3 text-sm leading-6 text-[#888]">
-              Os assets enviados ja ficam disponiveis para futuramente alimentar
-              a geracao real. Nesta versao, a selecao ainda nao entra no prompt
-              nem cria imagens.
+            <p className="mt-3 text-sm leading-6 text-[#A9A096]">
+              A selecao abaixo ainda nao altera a campanha, mas organiza o fluxo
+              para usar referencias nas proximas versoes.
             </p>
           </div>
 
           <div className="w-full lg:max-w-sm">
             <label className="space-y-2">
-              <span className="text-sm font-medium text-[#e0d5c5]">
-                Asset de referencia
+              <span className="text-sm font-medium text-[#F4EBDD]">
+                Peça de referencia
               </span>
-              <select
-                className="h-11 w-full rounded-xl border border-[#2a2a2a] bg-[#0d0d0d] px-3 text-sm text-[#666] outline-none"
-                disabled
-              >
+              <Select disabled>
                 {referenceAssets.length > 0 ? (
                   referenceAssets.map((asset) => (
                     <option key={asset.id}>
@@ -96,18 +87,18 @@ export default async function GeneratePage() {
                     </option>
                   ))
                 ) : (
-                  <option>Nenhum asset de roupa ou estilo enviado</option>
+                  <option>Nenhuma peça ou referencia enviada</option>
                 )}
-              </select>
+              </Select>
             </label>
             <div className="mt-3">
               <Badge tone="neutral">Preparado para versao futura</Badge>
             </div>
             <Link
-              className="mt-3 inline-flex text-sm font-semibold text-[#C8A96E] hover:text-[#d8bd83]"
+              className="mt-3 inline-flex text-sm font-semibold text-[#E3C98A] hover:text-[#C8A96E]"
               href="/dashboard/assets"
             >
-              Enviar assets
+              Enviar peças
             </Link>
           </div>
         </div>

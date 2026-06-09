@@ -9,17 +9,16 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function buttonClassName(variant: ButtonVariant = "primary") {
   const base =
-    "inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+    "inline-flex min-h-11 items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8A96E] disabled:cursor-not-allowed disabled:opacity-50";
 
   const variants: Record<ButtonVariant, string> = {
     primary:
-      "bg-gradient-to-r from-[#C8A96E] via-[#d8bd83] to-[#a07840] text-black shadow-[0_14px_40px_rgba(200,169,110,0.18)] hover:brightness-110",
+      "bg-gradient-to-r from-[#E3C98A] via-[#C8A96E] to-[#8C6A32] text-[#080807] shadow-[0_16px_44px_rgba(200,169,110,0.16)] hover:brightness-105",
     secondary:
-      "border border-[#333] bg-[#111] text-[#e0d5c5] hover:border-[#C8A96E]/60 hover:bg-[#171717]",
-    ghost:
-      "text-[#b6aa96] hover:bg-[#111] hover:text-[#C8A96E]",
+      "border border-[#28241C] bg-[#15130F] text-[#F4EBDD] hover:border-[#5C4724] hover:bg-[#1A1712]",
+    ghost: "text-[#A9A096] hover:bg-[#15130F] hover:text-[#E3C98A]",
     danger:
-      "border border-red-500/40 bg-red-950/40 text-red-100 hover:bg-red-900/50",
+      "border border-red-500/40 bg-red-950/30 text-red-100 hover:bg-red-900/45",
   };
 
   return `${base} ${variants[variant]}`;

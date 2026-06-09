@@ -1,12 +1,39 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Badge } from "@/components/ui/Badge";
+import { buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { SectionTitle } from "@/components/ui/SectionTitle";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { PreviewFrame } from "@/components/ui/PreviewFrame";
 import { requireCurrentSession } from "@/lib/auth";
 import { getDashboardContext } from "@/lib/dashboard";
 import { prisma } from "@/lib/prisma";
+
+type HistoryPageProps = {
+  searchParams: Promise<{
+    status?: string | string[];
+  }>;
+};
+
+const statusFilters = [
+  { href: "/dashboard/history", label: "Tudo", value: "ALL" },
+  {
+    href: "/dashboard/history?status=COMPLETED",
+    label: "Concluidas",
+    value: "COMPLETED",
+  },
+  {
+    href: "/dashboard/history?status=PROCESSING",
+    label: "Em producao",
+    value: "PROCESSING",
+  },
+  {
+    href: "/dashboard/history?status=FAILED",
+    label: "Falhas",
+    value: "FAILED",
+  },
+];
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -16,12 +43,30 @@ function formatDate(date: Date) {
 }
 
 function getPromptExcerpt(prompt: string) {
-  return prompt.length > 180 ? `${prompt.slice(0, 180)}...` : prompt;
+  return prompt.length > 150 ? `${prompt.slice(0, 150)}...` : prompt;
 }
 
-export default async function HistoryPage() {
+function getStatusTone(status: string): "red" | "green" | "gold" {
+  if (status === "FAILED") {
+    return "red";
+  }
+
+  if (status === "COMPLETED") {
+    return "green";
+  }
+
+  return "gold";
+}
+
+function getSearchParam(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function HistoryPage({ searchParams }: HistoryPageProps) {
   const session = await requireCurrentSession();
   const data = await getDashboardContext(session.userId);
+  const params = await searchParams;
+  const activeStatus = getSearchParam(params.status) ?? "ALL";
 
   const generations = await prisma.generation.findMany({
     where: { organizationId: data.organization.id },
@@ -44,103 +89,137 @@ export default async function HistoryPage() {
     },
   });
 
+  const visibleGenerations =
+    activeStatus === "ALL"
+      ? generations
+      : generations.filter((generation) => generation.status === activeStatus);
+
   return (
     <DashboardShell
       activePath="/dashboard/history"
       credits={data.credits}
       organizationName={data.organization.name}
-      title="Historico"
+      subtitle="Arquivo visual"
+      title="Galeria"
     >
-      <Card className="p-0">
-        <div className="p-6">
-          <SectionTitle index="01">Geracoes da organizacao</SectionTitle>
-          <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
-            Historico de geracoes
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <Badge tone="gold">Campanhas e direcoes</Badge>
+          <h2 className="mt-4 font-display text-4xl font-semibold text-[#F4EBDD]">
+            Galeria editorial
           </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#A9A096]">
+            Revise imagens geradas, rascunhos mock e direcoes fotograficas
+            salvas pela loja.
+          </p>
         </div>
 
-        {generations.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px] border-collapse text-left text-sm">
-              <thead className="border-y border-[#1e1e1e] bg-[#0d0d0d] text-xs uppercase tracking-[0.18em] text-[#666]">
-                <tr>
-                  <th className="px-5 py-3 font-semibold">Data</th>
-                  <th className="px-5 py-3 font-semibold">Imagem</th>
-                  <th className="px-5 py-3 font-semibold">Status</th>
-                  <th className="px-5 py-3 font-semibold">Provider/model</th>
-                  <th className="px-5 py-3 font-semibold">Creditos</th>
-                  <th className="px-5 py-3 font-semibold">Prompt</th>
-                  <th className="px-5 py-3 font-semibold">Detalhe</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#1e1e1e]">
-                {generations.map((generation) => (
-                  <tr key={generation.id} className="align-top">
-                    <td className="px-5 py-4 text-[#888]">
-                      {formatDate(generation.createdAt)}
-                    </td>
-                    <td className="px-5 py-4">
-                      {generation.outputAsset?.publicUrl &&
-                      generation.outputAsset.mimeType?.startsWith("image/") ? (
-                        <div className="relative h-14 w-14 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#0d0d0d]">
-                          <Image
-                            alt={
-                              generation.outputAsset.fileName ??
-                              "Imagem gerada"
-                            }
-                            className="object-cover"
-                            fill
-                            sizes="56px"
-                            src={generation.outputAsset.publicUrl}
-                          />
-                        </div>
-                      ) : (
-                        <span className="text-xs text-[#555]">-</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-4">
-                      <Badge
-                        tone={
-                          generation.status === "FAILED"
-                            ? "red"
-                            : generation.status === "COMPLETED"
-                              ? "green"
-                              : "gold"
-                        }
-                      >
+        <div className="flex flex-wrap gap-2">
+          {statusFilters.map((filter) => {
+            const active = activeStatus === filter.value;
+
+            return (
+              <Link
+                className={
+                  active
+                    ? "rounded-full border border-[#5C4724] bg-[#1A1712] px-4 py-2 text-sm font-semibold text-[#E3C98A]"
+                    : "rounded-full border border-[#28241C] bg-[#0F0F0D] px-4 py-2 text-sm font-semibold text-[#A9A096] transition hover:border-[#5C4724] hover:text-[#F4EBDD]"
+                }
+                href={filter.href}
+                key={filter.value}
+              >
+                {filter.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {visibleGenerations.length > 0 ? (
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {visibleGenerations.map((generation) => {
+            const imageUrl =
+              generation.outputAsset?.publicUrl &&
+              generation.outputAsset.mimeType?.startsWith("image/")
+                ? generation.outputAsset.publicUrl
+                : null;
+
+            return (
+              <Link
+                className="group block"
+                href={`/dashboard/history/${generation.id}`}
+                key={generation.id}
+              >
+                <Card className="h-full p-0 transition hover:border-[#5C4724]">
+                  <PreviewFrame className="aspect-[4/5] rounded-b-none border-x-0 border-t-0">
+                    {imageUrl ? (
+                      <Image
+                        alt={generation.outputAsset?.fileName ?? "Campanha"}
+                        className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                        fill
+                        sizes="(min-width: 1536px) 22vw, (min-width: 1280px) 28vw, (min-width: 640px) 45vw, 90vw"
+                        src={imageUrl}
+                      />
+                    ) : (
+                      <div className="flex h-full flex-col justify-between p-5">
+                        <Badge tone="neutral">Rascunho</Badge>
+                        <p className="line-clamp-7 text-sm leading-6 text-[#A9A096]">
+                          {getPromptExcerpt(generation.prompt)}
+                        </p>
+                      </div>
+                    )}
+                  </PreviewFrame>
+
+                  <div className="space-y-4 p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <Badge tone={getStatusTone(generation.status)}>
                         {generation.status}
                       </Badge>
-                    </td>
-                    <td className="px-5 py-4 text-[#888]">
-                      {generation.provider ?? "OTHER"} /{" "}
-                      {generation.model ?? "mock"}
-                    </td>
-                    <td className="px-5 py-4 text-[#888]">
-                      {generation.creditsUsed}
-                    </td>
-                    <td className="max-w-sm px-5 py-4 leading-6 text-[#888]">
+                      <span className="text-xs text-[#6F6A63]">
+                        {generation.creditsUsed} credito
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="font-display text-xl font-semibold text-[#F4EBDD]">
+                        Campanha #{generation.id.slice(-5)}
+                      </h3>
+                      <p className="mt-1 text-xs text-[#6F6A63]">
+                        {formatDate(generation.createdAt)}
+                      </p>
+                    </div>
+
+                    <p className="line-clamp-3 text-sm leading-6 text-[#A9A096]">
                       {getPromptExcerpt(generation.prompt)}
-                    </td>
-                    <td className="px-5 py-4">
-                      <Link
-                        className="font-semibold text-[#C8A96E] hover:text-[#d8bd83]"
-                        href={`/dashboard/history/${generation.id}`}
-                      >
-                        Ver detalhes
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="px-6 pb-10 text-sm leading-6 text-[#888]">
-            Nenhuma geracao salva ainda. Use o gerador para criar o primeiro
-            registro mock.
-          </div>
-        )}
-      </Card>
+                    </p>
+
+                    <div className="flex items-center justify-between border-t border-[#28241C] pt-4 text-xs text-[#6F6A63]">
+                      <span>
+                        {generation.provider ?? "OTHER"} /{" "}
+                        {generation.model ?? "mock"}
+                      </span>
+                      <span className="font-semibold text-[#C8A96E]">
+                        Ver detalhe
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        <EmptyState
+          action={
+            <Link className={buttonClassName("primary")} href="/dashboard/generate">
+              Criar imagem
+            </Link>
+          }
+          description="Quando uma campanha for salva, ela aparece aqui com imagem, status e direcao fotografica."
+          eyebrow="Galeria vazia"
+          title="Nenhuma campanha encontrada"
+        />
+      )}
     </DashboardShell>
   );
 }

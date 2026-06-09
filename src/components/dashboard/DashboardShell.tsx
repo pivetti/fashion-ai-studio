@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 const navigation = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Gerar Imagem", href: "/dashboard/generate" },
-  { label: "Historico", href: "/dashboard/history" },
-  { label: "Assets", href: "/dashboard/assets" },
+  { label: "Studio", href: "/dashboard" },
+  { label: "Criar Editorial", href: "/dashboard/generate" },
+  { label: "Galeria", href: "/dashboard/history" },
+  { label: "Pecas", href: "/dashboard/assets" },
+  { label: "Marca", href: "/dashboard/settings" },
   { label: "Creditos", href: "/dashboard/credits" },
-  { label: "Configuracoes", href: "/dashboard/settings" },
 ];
 
 type DashboardShellProps = {
@@ -28,23 +28,26 @@ export function DashboardShell({
   children,
   credits,
   organizationName,
-  subtitle = "Organizacao atual",
+  subtitle = "Atelier digital",
   title,
 }: DashboardShellProps) {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-[#f0e6d0]">
-      <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
-        <aside className="border-b border-[#1e1e1e] bg-[#0d0d0d] px-5 py-5 text-[#f0e6d0] lg:border-b-0 lg:border-r">
+    <main className="min-h-screen bg-[#080807] text-[#F4EBDD]">
+      <div className="grid min-h-screen lg:grid-cols-[248px_1fr]">
+        <aside className="border-b border-[#28241C] bg-[#0F0F0D] px-5 py-5 text-[#F4EBDD] lg:border-b-0 lg:border-r">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C8A96E]">
-              Fashion AI Studio
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#C8A96E]">
+              Betume Studio
             </p>
-            <p className="mt-3 font-display text-2xl leading-7 text-[#f0e6d0]">
+            <p className="mt-4 font-display text-2xl leading-7 text-[#F4EBDD]">
+              Studio editorial
+            </p>
+            <p className="mt-2 truncate text-sm text-[#A9A096]">
               {organizationName}
             </p>
           </div>
 
-          <nav className="mt-8 flex gap-2 overflow-x-auto text-sm lg:flex-col lg:overflow-visible">
+          <nav className="mt-8 flex gap-2 overflow-x-auto pb-1 text-sm lg:flex-col lg:overflow-visible lg:pb-0">
             {navigation.map((item) => {
               const active = item.href === activePath;
 
@@ -53,8 +56,8 @@ export function DashboardShell({
                   key={item.href}
                   className={
                     active
-                      ? "rounded-xl border border-[#C8A96E]/40 bg-[#C8A96E]/10 px-3 py-2 font-semibold text-[#C8A96E]"
-                      : "rounded-xl border border-transparent px-3 py-2 font-medium text-[#888] transition hover:border-[#333] hover:bg-[#111] hover:text-[#f0e6d0]"
+                      ? "border-l border-[#C8A96E] bg-[#15130F] px-3 py-2.5 font-semibold text-[#F4EBDD]"
+                      : "border-l border-transparent px-3 py-2.5 font-medium text-[#A9A096] transition hover:border-[#5C4724] hover:bg-[#15130F] hover:text-[#F4EBDD]"
                   }
                   href={item.href}
                 >
@@ -66,19 +69,19 @@ export function DashboardShell({
         </aside>
 
         <section className="flex min-w-0 flex-col">
-          <header className="flex flex-col gap-4 border-b border-[#1e1e1e] bg-[#0a0a0a]/95 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+          <header className="flex flex-col gap-4 border-b border-[#28241C] bg-[#080807]/95 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-8">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#888]">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#6F6A63]">
                 {subtitle}
               </p>
-              <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-[#f0e6d0]">
+              <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-[#F4EBDD]">
                 {title}
               </h1>
             </div>
 
             <div className="flex items-center gap-3">
               {typeof credits === "number" ? (
-                <Badge>{credits} creditos</Badge>
+                <Badge tone="studio">{credits} creditos</Badge>
               ) : null}
               <form action={logoutAction}>
                 <Button type="submit" variant="secondary">

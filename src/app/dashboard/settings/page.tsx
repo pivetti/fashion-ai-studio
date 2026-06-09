@@ -4,7 +4,7 @@ export default async function SettingsPage() {
   return await DashboardPlaceholder({
     activePath: "/dashboard/settings",
     description:
-      "Configuracoes da organizacao, membros e perfil de marca serao adicionadas nesta secao.",
-    title: "Configuracoes",
+      "Perfil visual, membros e diretrizes de marca entram aqui nas proximas etapas.",
+    title: "Marca",
   });
 }

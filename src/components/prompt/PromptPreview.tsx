@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { PreviewFrame } from "@/components/ui/PreviewFrame";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 
 type PromptPreviewProps = {
@@ -24,12 +25,12 @@ export function PromptPreview({ prompt }: PromptPreviewProps) {
   }
 
   return (
-    <Card>
+    <Card className="xl:sticky xl:top-6 xl:self-start" variant="soft">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <SectionTitle index="05">Prompt gerado</SectionTitle>
-          <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
-            Preview
+          <SectionTitle index="05">Direcao fotografica</SectionTitle>
+          <h2 className="mt-5 font-display text-2xl font-semibold text-[#F4EBDD]">
+            Preview editorial
           </h2>
         </div>
 
@@ -39,22 +40,22 @@ export function PromptPreview({ prompt }: PromptPreviewProps) {
           type="button"
           variant="secondary"
         >
-          {copied ? "Copiado" : "Copiar prompt"}
+          {copied ? "Copiado" : "Copiar direcao"}
         </Button>
       </div>
 
-      <div className="mt-5 min-h-[320px] rounded-2xl border border-[#C8A96E]/20 bg-[#0d0d0d] p-4">
+      <PreviewFrame className="mt-5 min-h-[360px]" label="Brief">
         {hasPrompt ? (
-          <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-[#e0d5c5]">
+          <pre className="whitespace-pre-wrap break-words p-4 font-sans text-sm leading-7 text-[#F4EBDD]">
             {prompt}
           </pre>
         ) : (
-          <div className="flex min-h-[288px] items-center justify-center text-center text-sm leading-6 text-[#666]">
-            Preencha o formulario e clique em Gerar Prompt para visualizar a
-            direcao fotografica.
+          <div className="flex min-h-[320px] items-center justify-center p-6 text-center text-sm leading-6 text-[#6F6A63]">
+            Complete as etapas e gere a direcao para visualizar o briefing da
+            campanha.
           </div>
         )}
-      </div>
+      </PreviewFrame>
     </Card>
   );
 }

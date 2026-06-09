@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
   children: ReactNode;
-  tone?: "gold" | "green" | "red" | "neutral";
+  tone?: "gold" | "green" | "red" | "neutral" | "studio";
 };
 
 export function Badge({
@@ -12,15 +12,16 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const tones = {
-    gold: "border-[#C8A96E]/35 bg-[#C8A96E]/10 text-[#C8A96E]",
-    green: "border-emerald-400/30 bg-emerald-950/40 text-emerald-200",
-    red: "border-red-400/30 bg-red-950/40 text-red-200",
-    neutral: "border-[#333] bg-[#0d0d0d] text-[#888]",
+    gold: "border-[#5C4724] bg-[#C8A96E]/10 text-[#E3C98A]",
+    green: "border-emerald-500/25 bg-emerald-950/35 text-emerald-200",
+    red: "border-red-500/30 bg-red-950/35 text-red-200",
+    neutral: "border-[#28241C] bg-[#15130F] text-[#A9A096]",
+    studio: "border-[#28241C] bg-[#0F0F0D] text-[#F4EBDD]",
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${tones[tone]} ${className}`}
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold leading-none ${tones[tone]} ${className}`}
       {...props}
     >
       {children}

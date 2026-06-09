@@ -6,6 +6,8 @@ import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { PreviewFrame } from "@/components/ui/PreviewFrame";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { requireCurrentSession } from "@/lib/auth";
 import { getDashboardContext } from "@/lib/dashboard";
@@ -20,7 +22,7 @@ type AssetsPageProps = {
 };
 
 const assetTypeLabels: Record<AssetType, string> = {
-  [AssetType.CLOTHING_REFERENCE]: "Roupa",
+  [AssetType.CLOTHING_REFERENCE]: "Peça",
   [AssetType.BRAND_LOGO]: "Logo da marca",
   [AssetType.GENERATED_IMAGE]: "Imagem gerada",
   [AssetType.STYLE_REFERENCE]: "Referencia de estilo",
@@ -95,23 +97,28 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
       activePath="/dashboard/assets"
       credits={data.credits}
       organizationName={data.organization.name}
-      title="Assets"
+      subtitle="Biblioteca visual"
+      title="Peças e Referencias"
     >
       <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
-        <Card>
-          <SectionTitle index="01">Upload de imagem</SectionTitle>
-          <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
-            Adicionar asset
+        <Card variant="elevated">
+          <SectionTitle index="01">Entrada de peca</SectionTitle>
+          <h2 className="mt-5 font-display text-3xl font-semibold text-[#F4EBDD]">
+            Enviar referencia
           </h2>
+          <p className="mt-3 text-sm leading-6 text-[#A9A096]">
+            Suba produto, logo ou inspiracao visual para compor a biblioteca do
+            studio.
+          </p>
 
           {errorMessage ? (
-            <div className="mt-4 rounded-xl border border-red-400/30 bg-red-950/40 px-4 py-3 text-sm leading-6 text-red-100">
+            <div className="mt-4 rounded-2xl border border-red-400/30 bg-red-950/35 px-4 py-3 text-sm leading-6 text-red-100">
               {errorMessage}
             </div>
           ) : null}
 
           {successMessage ? (
-            <div className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-950/40 px-4 py-3 text-sm leading-6 text-emerald-100">
+            <div className="mt-4 rounded-2xl border border-emerald-400/30 bg-emerald-950/35 px-4 py-3 text-sm leading-6 text-emerald-100">
               {successMessage}
             </div>
           ) : null}
@@ -121,70 +128,88 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
 
         <Card className="p-0">
           <div className="p-6">
-            <SectionTitle index="02">Biblioteca da organizacao</SectionTitle>
-            <h2 className="mt-5 font-display text-2xl font-semibold text-[#f0e6d0]">
-              {assets.length} asset{assets.length === 1 ? "" : "s"}
+            <SectionTitle index="02">Biblioteca do studio</SectionTitle>
+            <h2 className="mt-5 font-display text-3xl font-semibold text-[#F4EBDD]">
+              {assets.length} peça{assets.length === 1 ? "" : "s"}
             </h2>
+            <p className="mt-3 text-sm text-[#A9A096]">
+              Arquivos de campanha, produto e marca para reutilizar nos
+              editoriais.
+            </p>
           </div>
 
           {assets.length > 0 ? (
             <div className="grid gap-5 p-6 pt-0 md:grid-cols-2 2xl:grid-cols-3">
               {assets.map((asset) => {
-                const isImage = asset.mimeType?.startsWith("image/");
+                const imageUrl =
+                  asset.publicUrl && asset.mimeType?.startsWith("image/")
+                    ? asset.publicUrl
+                    : null;
 
                 return (
                   <article
-                    className="overflow-hidden rounded-2xl border border-[#1e1e1e] bg-[#0d0d0d]"
+                    className="overflow-hidden rounded-[1.35rem] border border-[#28241C] bg-[#15130F]"
                     key={asset.id}
                   >
-                    <div className="relative flex aspect-[4/3] items-center justify-center bg-black">
-                      {isImage && asset.publicUrl ? (
+                    <PreviewFrame className="aspect-[4/3] rounded-b-none border-x-0 border-t-0">
+                      {imageUrl ? (
                         <Image
-                          alt={asset.fileName ?? "Asset"}
+                          alt={asset.fileName ?? "Peca"}
                           className="object-cover"
                           fill
                           sizes="(min-width: 1536px) 25vw, (min-width: 768px) 40vw, 90vw"
-                          src={asset.publicUrl}
+                          src={imageUrl}
                         />
                       ) : (
-                        <span className="text-sm text-[#666]">
+                        <span className="flex h-full items-center justify-center text-sm text-[#6F6A63]">
                           Sem preview
                         </span>
                       )}
-                    </div>
+                    </PreviewFrame>
 
                     <div className="space-y-3 p-4">
                       <div>
                         <Badge tone="neutral">{assetTypeLabels[asset.type]}</Badge>
-                        <h3 className="mt-3 line-clamp-2 text-sm font-semibold text-[#f0e6d0]">
+                        <h3 className="mt-3 line-clamp-2 text-sm font-semibold text-[#F4EBDD]">
                           {asset.fileName ?? "Arquivo sem nome"}
                         </h3>
                       </div>
 
-                      <div className="grid gap-2 text-xs text-[#666]">
+                      <div className="grid gap-2 text-xs text-[#6F6A63]">
                         <p>Tamanho: {formatBytes(asset.sizeBytes)}</p>
                         <p>Upload: {formatDate(asset.createdAt)}</p>
                       </div>
 
-                      {asset.publicUrl ? (
+                      <div className="flex flex-col gap-2">
                         <Link
                           className={buttonClassName("secondary")}
-                          href={asset.publicUrl}
-                          rel="noopener noreferrer"
-                          target="_blank"
+                          href="/dashboard/generate"
                         >
-                          Abrir imagem
+                          Usar em novo editorial
                         </Link>
-                      ) : null}
+                        {asset.publicUrl ? (
+                          <Link
+                            className="text-center text-sm font-semibold text-[#C8A96E] transition hover:text-[#E3C98A]"
+                            href={asset.publicUrl}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            Abrir imagem
+                          </Link>
+                        ) : null}
+                      </div>
                     </div>
                   </article>
                 );
               })}
             </div>
           ) : (
-            <div className="px-6 pb-10 text-sm leading-6 text-[#888]">
-              Nenhum asset enviado ainda. Adicione uma imagem de roupa, logo ou
-              referencia para montar sua biblioteca.
+            <div className="px-6 pb-10">
+              <EmptyState
+                description="Envie uma foto de produto, logo ou referencia de estilo para iniciar a biblioteca."
+                eyebrow="Biblioteca vazia"
+                title="Nenhuma peça enviada"
+              />
             </div>
           )}
         </Card>

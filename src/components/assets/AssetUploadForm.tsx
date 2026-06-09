@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import {
   ACCEPTED_IMAGE_MIME_TYPES,
   MAX_ASSET_UPLOAD_BYTES,
@@ -71,25 +72,21 @@ export function AssetUploadForm({ action, assetTypes }: AssetUploadFormProps) {
       onSubmit={handleSubmit}
     >
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-[#e0d5c5]">Tipo</span>
-        <select
-          className="h-11 w-full rounded-xl border border-[#2a2a2a] bg-[#0d0d0d] px-3 text-sm text-[#f0e6d0] outline-none transition focus:border-[#C8A96E] focus:ring-2 focus:ring-[#C8A96E]/15"
-          name="type"
-          required
-        >
+        <span className="text-sm font-medium text-[#F4EBDD]">Tipo</span>
+        <Select name="type" required>
           {assetTypes.map((type) => (
             <option key={type.value} value={type.value}>
               {type.label}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-[#e0d5c5]">Imagem</span>
+        <span className="text-sm font-medium text-[#F4EBDD]">Imagem</span>
         <input
           accept={ACCEPTED_IMAGE_MIME_TYPES.join(",")}
-          className="block w-full rounded-xl border border-[#2a2a2a] bg-[#0d0d0d] px-3 py-2 text-sm text-[#888] file:mr-4 file:rounded-lg file:border-0 file:bg-[#C8A96E] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-black"
+          className="block w-full rounded-2xl border border-[#28241C] bg-[#15130F] px-3 py-2 text-sm text-[#A9A096] file:mr-4 file:rounded-full file:border-0 file:bg-[#C8A96E] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#080807] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8A96E]"
           name="file"
           onChange={handleFileChange}
           ref={fileInputRef}
@@ -99,18 +96,18 @@ export function AssetUploadForm({ action, assetTypes }: AssetUploadFormProps) {
       </label>
 
       {clientError ? (
-        <div className="rounded-xl border border-amber-300/30 bg-amber-950/40 px-4 py-3 text-sm leading-6 text-amber-100">
+        <div className="rounded-2xl border border-amber-300/30 bg-amber-950/35 px-4 py-3 text-sm leading-6 text-amber-100">
           {clientError}
         </div>
       ) : null}
 
-      <p className="text-xs leading-5 text-[#666]">
+      <p className="text-xs leading-5 text-[#6F6A63]">
         Formatos aceitos: PNG, JPG, WebP ou GIF. Tamanho maximo:{" "}
         {MAX_ASSET_UPLOAD_MB}MB.
       </p>
 
       <Button className="w-full" disabled={Boolean(clientError)} type="submit">
-        Enviar asset
+        Enviar peca
       </Button>
     </form>
   );

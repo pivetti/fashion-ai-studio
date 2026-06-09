@@ -20,10 +20,10 @@ export function SliderField({
   value,
 }: SliderFieldProps) {
   return (
-    <label className="block rounded-2xl border border-[#1e1e1e] bg-[#0d0d0d] p-4">
-      <span className="flex items-center justify-between gap-4 text-sm font-medium text-[#e0d5c5]">
+    <label className="block rounded-2xl border border-[#28241C] bg-[#15130F] p-4">
+      <span className="flex items-center justify-between gap-4 text-sm font-medium text-[#F4EBDD]">
         {label}
-        <span className="rounded-full border border-[#C8A96E]/25 bg-[#C8A96E]/10 px-3 py-1 text-xs text-[#C8A96E]">
+        <span className="rounded-full border border-[#5C4724] bg-[#C8A96E]/10 px-3 py-1 text-xs text-[#E3C98A]">
           {value}
           {suffix}
         </span>

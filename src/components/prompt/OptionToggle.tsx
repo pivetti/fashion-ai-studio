@@ -17,7 +17,7 @@ export function OptionToggle({
 }: OptionToggleProps) {
   return (
     <div className="space-y-3">
-      <p className="text-sm font-medium text-[#e0d5c5]">{label}</p>
+      <p className="text-sm font-medium text-[#F4EBDD]">{label}</p>
       <div className="grid gap-2 sm:grid-cols-3">
         {options.map((option) => {
           const active = option.value === value;
@@ -29,8 +29,8 @@ export function OptionToggle({
               onClick={() => onChange(option.value)}
               className={
                 active
-                  ? "rounded-xl border border-[#C8A96E] bg-[#C8A96E]/12 px-3 py-2 text-left text-sm font-semibold text-[#C8A96E] shadow-[0_0_0_1px_rgba(200,169,110,0.08)]"
-                  : "rounded-xl border border-[#2a2a2a] bg-[#0d0d0d] px-3 py-2 text-left text-sm font-medium text-[#888] transition hover:border-[#C8A96E]/50 hover:text-[#e0d5c5]"
+                  ? "rounded-2xl border border-[#5C4724] bg-[#1A1712] px-3 py-2.5 text-left text-sm font-semibold text-[#E3C98A] shadow-[0_0_0_1px_rgba(200,169,110,0.08)]"
+                  : "rounded-2xl border border-[#28241C] bg-[#15130F] px-3 py-2.5 text-left text-sm font-medium text-[#A9A096] transition hover:border-[#5C4724] hover:text-[#F4EBDD]"
               }
             >
               {option.label}
