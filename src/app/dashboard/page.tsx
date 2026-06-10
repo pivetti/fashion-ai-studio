@@ -83,7 +83,7 @@ export default async function DashboardPage() {
       credits={data.credits}
       organizationName={data.organization.name}
       subtitle="Studio"
-      title="Studio"
+      title="Dashboard"
     >
       <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="min-h-0 overflow-hidden lg:min-h-[320px]" variant="elevated">
