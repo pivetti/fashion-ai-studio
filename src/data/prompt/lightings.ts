@@ -9,7 +9,7 @@ export const lightings: PromptOption[] = [
   {
     label: "Golden Hour",
     value: "warm golden-hour light with refined luxury contrast",
-    description: "Editorial warmth",
+    description: "Imagem quente e premium",
   },
   {
     label: "High Contrast",

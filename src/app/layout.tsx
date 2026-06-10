@@ -15,7 +15,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "Betume Studio",
-  description: "Estudio editorial para campanhas visuais de moda.",
+  description: "Estudio de imagens para campanhas visuais de moda.",
 };
 
 export default function RootLayout({

@@ -4,7 +4,7 @@ export const lenses: PromptOption[] = [
   {
     label: "50mm",
     value: "50mm f/1.8 prime lens",
-    description: "Natural editorial framing",
+    description: "Enquadramento natural de imagem",
   },
   {
     label: "85mm",

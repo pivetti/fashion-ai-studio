@@ -71,32 +71,22 @@ export default async function GenerationDetailPage({
       subtitle="Campanha"
       title={`Campanha #${generation.id.slice(-5)}`}
     >
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <Link className={buttonClassName("secondary")} href="/dashboard/history">
-          Voltar para galeria
-        </Link>
-        <Link className={buttonClassName("primary")} href="/dashboard/generate">
-          Criar novo editorial
-        </Link>
-        {generation.outputAsset?.publicUrl ? (
-          <Link
-            className={buttonClassName("ghost")}
-            href={generation.outputAsset.publicUrl}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Abrir imagem
-          </Link>
-        ) : null}
+      <div className="mb-4 lg:hidden">
+        <h2 className="font-display text-2xl font-semibold text-[#F4EBDD]">
+          Campanha #{generation.id.slice(-5)}
+        </h2>
+        <p className="mt-1 text-sm text-[#A9A096]">
+          Imagem, status e direcao.
+        </p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.55fr)]">
-        <div className="space-y-6">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(320px,0.45fr)] xl:gap-6">
+        <div className="space-y-4 xl:space-y-6">
           <Card className="p-0" variant="elevated">
-            <div className="p-6">
-              <SectionTitle index="01">Imagem da campanha</SectionTitle>
+            <div className="p-4 sm:p-6">
+              <SectionTitle index="01">Imagem</SectionTitle>
             </div>
-            <PreviewFrame className="aspect-[4/5] rounded-t-none border-x-0 border-b-0">
+            <PreviewFrame className="aspect-[4/5] rounded-none border-x-0">
               {imageUrl ? (
                 <Image
                   alt={generation.outputAsset?.fileName ?? "Campanha gerada"}
@@ -106,35 +96,44 @@ export default async function GenerationDetailPage({
                   src={imageUrl}
                 />
               ) : (
-                <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+                <div className="flex h-full flex-col items-center justify-center p-6 text-center">
                   <Badge tone="neutral">Direcao sem imagem</Badge>
                   <p className="mt-4 max-w-md text-sm leading-6 text-[#A9A096]">
-                    Esta campanha foi salva como briefing ou mock sem arquivo de
-                    imagem vinculado.
+                    Briefing salvo sem arquivo de imagem.
                   </p>
                 </div>
               )}
             </PreviewFrame>
+
+            <div className="grid gap-2 p-4 sm:grid-cols-3 sm:p-5">
+              {generation.outputAsset?.publicUrl ? (
+                <Link
+                  className={buttonClassName("primary")}
+                  href={generation.outputAsset.publicUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Abrir imagem
+                </Link>
+              ) : null}
+              <Link
+                className={buttonClassName("secondary")}
+                href="/dashboard/history"
+              >
+                Galeria
+              </Link>
+              <Link
+                className={buttonClassName("secondary")}
+                href="/dashboard/generate"
+              >
+                Criar novo
+              </Link>
+            </div>
           </Card>
 
-          {generation.errorMessage ? (
-            <section className="rounded-[1.35rem] border border-red-400/30 bg-red-950/35 p-5 text-sm text-red-100">
-              {generation.errorMessage}
-            </section>
-          ) : null}
-
-          <Card>
-            <SectionTitle index="02">Direcao fotografica</SectionTitle>
-            <pre className="mt-5 whitespace-pre-wrap break-words rounded-2xl border border-[#28241C] bg-[#15130F] p-4 font-sans text-sm leading-7 text-[#F4EBDD]">
-              {generation.prompt}
-            </pre>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
           <Card variant="soft">
-            <SectionTitle index="03">Producao</SectionTitle>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <SectionTitle index="02">Producao</SectionTitle>
+            <div className="mt-4 flex flex-wrap gap-2">
               <Badge tone={getStatusTone(generation.status)}>
                 {generation.status}
               </Badge>
@@ -142,9 +141,9 @@ export default async function GenerationDetailPage({
               <Badge tone="neutral">{generation.model ?? "mock"}</Badge>
               <Badge tone="gold">{generation.creditsUsed} credito</Badge>
             </div>
-            <div className="mt-6 space-y-3 text-sm text-[#A9A096]">
+            <div className="mt-5 grid gap-2 text-sm text-[#A9A096] sm:grid-cols-2">
               <p>
-                Criada em:{" "}
+                Criada:{" "}
                 <span className="text-[#F4EBDD]">
                   {formatDate(generation.createdAt)}
                 </span>
@@ -160,9 +159,30 @@ export default async function GenerationDetailPage({
             </div>
           </Card>
 
-          <Card variant="soft">
-            <SectionTitle index="04">Dados tecnicos</SectionTitle>
-            <pre className="mt-5 max-h-[520px] overflow-auto rounded-2xl border border-[#28241C] bg-[#080807] p-4 text-xs leading-6 text-[#A9A096]">
+          {generation.errorMessage ? (
+            <section className="rounded-[1.35rem] border border-red-400/30 bg-red-950/35 p-5 text-sm text-red-100">
+              {generation.errorMessage}
+            </section>
+          ) : null}
+
+          <Card as="details">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#F4EBDD]">
+              Direcao fotografica
+              <span className="text-xs text-[#C8A96E]">Abrir</span>
+            </summary>
+            <pre className="mt-4 max-h-[420px] overflow-auto whitespace-pre-wrap break-words rounded-2xl border border-[#28241C] bg-[#15130F] p-4 font-sans text-sm leading-7 text-[#F4EBDD]">
+              {generation.prompt}
+            </pre>
+          </Card>
+        </div>
+
+        <div className="space-y-4 xl:space-y-6">
+          <Card as="details" variant="soft">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#F4EBDD]">
+              Dados tecnicos
+              <span className="text-xs text-[#C8A96E]">Abrir</span>
+            </summary>
+            <pre className="mt-4 max-h-[520px] overflow-auto rounded-2xl border border-[#28241C] bg-[#080807] p-4 text-xs leading-6 text-[#A9A096]">
               {JSON.stringify(generation.inputData, null, 2)}
             </pre>
           </Card>

@@ -102,19 +102,17 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
       subtitle="Arquivo visual"
       title="Galeria"
     >
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <Badge tone="gold">Campanhas e direcoes</Badge>
-          <h2 className="mt-4 font-display text-4xl font-semibold text-[#F4EBDD]">
-            Galeria editorial
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#A9A096]">
-            Revise imagens geradas, rascunhos mock e direcoes fotograficas
-            salvas pela loja.
-          </p>
-        </div>
+      <div className="mb-4 lg:hidden">
+        <h2 className="font-display text-2xl font-semibold text-[#F4EBDD]">
+          Galeria
+        </h2>
+        <p className="mt-1 text-sm text-[#A9A096]">
+          Imagens, mocks e direcoes salvas.
+        </p>
+      </div>
 
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-5 overflow-x-auto pb-1">
+        <div className="flex w-max gap-2">
           {statusFilters.map((filter) => {
             const active = activeStatus === filter.value;
 
@@ -122,8 +120,8 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
               <Link
                 className={
                   active
-                    ? "rounded-full border border-[#5C4724] bg-[#1A1712] px-4 py-2 text-sm font-semibold text-[#E3C98A]"
-                    : "rounded-full border border-[#28241C] bg-[#0F0F0D] px-4 py-2 text-sm font-semibold text-[#A9A096] transition hover:border-[#5C4724] hover:text-[#F4EBDD]"
+                    ? "flex min-h-11 items-center rounded-full border border-[#5C4724] bg-[#1A1712] px-4 text-sm font-semibold text-[#E3C98A]"
+                    : "flex min-h-11 items-center rounded-full border border-[#28241C] bg-[#0F0F0D] px-4 text-sm font-semibold text-[#A9A096] transition hover:border-[#5C4724] hover:text-[#F4EBDD]"
                 }
                 href={filter.href}
                 key={filter.value}
@@ -136,7 +134,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
       </div>
 
       {visibleGenerations.length > 0 ? (
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 min-[390px]:grid-cols-2 sm:grid-cols-2 md:gap-5 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleGenerations.map((generation) => {
             const imageUrl =
               generation.outputAsset?.publicUrl &&
@@ -151,7 +149,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
                 key={generation.id}
               >
                 <Card className="h-full p-0 transition hover:border-[#5C4724]">
-                  <PreviewFrame className="aspect-[4/5] rounded-b-none border-x-0 border-t-0">
+                  <PreviewFrame className="aspect-square rounded-b-none border-x-0 border-t-0 sm:aspect-[4/5]">
                     {imageUrl ? (
                       <Image
                         alt={generation.outputAsset?.fileName ?? "Campanha"}
@@ -161,16 +159,16 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
                         src={imageUrl}
                       />
                     ) : (
-                      <div className="flex h-full flex-col justify-between p-5">
+                      <div className="flex h-full flex-col justify-between p-3 sm:p-5">
                         <Badge tone="neutral">Rascunho</Badge>
-                        <p className="line-clamp-7 text-sm leading-6 text-[#A9A096]">
+                        <p className="line-clamp-4 text-xs leading-5 text-[#A9A096] sm:line-clamp-7 sm:text-sm sm:leading-6">
                           {getPromptExcerpt(generation.prompt)}
                         </p>
                       </div>
                     )}
                   </PreviewFrame>
 
-                  <div className="space-y-4 p-5">
+                  <div className="space-y-3 p-3 sm:space-y-4 sm:p-5">
                     <div className="flex items-center justify-between gap-3">
                       <Badge tone={getStatusTone(generation.status)}>
                         {generation.status}
@@ -189,7 +187,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
                       </p>
                     </div>
 
-                    <p className="line-clamp-3 text-sm leading-6 text-[#A9A096]">
+                    <p className="hidden line-clamp-3 text-sm leading-6 text-[#A9A096] sm:block">
                       {getPromptExcerpt(generation.prompt)}
                     </p>
 
@@ -199,7 +197,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
                         {generation.model ?? "mock"}
                       </span>
                       <span className="font-semibold text-[#C8A96E]">
-                        Ver detalhe
+                        Abrir
                       </span>
                     </div>
                   </div>

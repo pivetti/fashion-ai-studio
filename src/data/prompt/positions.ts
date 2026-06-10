@@ -2,8 +2,8 @@ import type { PromptOption } from "@/types/prompt";
 
 export const positions: PromptOption[] = [
   {
-    label: "Editorial",
-    value: "standing in a confident editorial pose with relaxed shoulders",
+    label: "Imagem",
+    value: "standing in a confident fashion image pose with relaxed shoulders",
     description: "Clean fashion catalog energy",
   },
   {

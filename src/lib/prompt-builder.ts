@@ -20,7 +20,7 @@ export function buildFashionPrompt(input: FashionPromptInput) {
   ].join(", ");
 
   const promptParts = [
-    `Professional high-end fashion editorial photograph of a ${subject}.`,
+    `Professional high-end fashion image of a ${subject}.`,
     `The model is wearing ${clothing || "a premium contemporary outfit with refined tailoring and visible fabric texture"}.`,
     `Pose and composition: ${input.position}, full outfit visible, clean silhouette, balanced proportions, confident expression, hands natural, premium catalog framing.`,
     `Lighting: ${input.lighting}, realistic shadows, controlled highlights, accurate color reproduction, crisp textile detail.`,

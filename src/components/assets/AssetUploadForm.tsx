@@ -86,7 +86,7 @@ export function AssetUploadForm({ action, assetTypes }: AssetUploadFormProps) {
         <span className="text-sm font-medium text-[#F4EBDD]">Imagem</span>
         <input
           accept={ACCEPTED_IMAGE_MIME_TYPES.join(",")}
-          className="block w-full rounded-2xl border border-[#28241C] bg-[#15130F] px-3 py-2 text-sm text-[#A9A096] file:mr-4 file:rounded-full file:border-0 file:bg-[#C8A96E] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#080807] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8A96E]"
+          className="block min-h-11 w-full rounded-2xl border border-[#28241C] bg-[#15130F] px-3 py-2 text-sm text-[#A9A096] file:mr-4 file:rounded-full file:border-0 file:bg-[#C8A96E] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#080807] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8A96E]"
           name="file"
           onChange={handleFileChange}
           ref={fileInputRef}

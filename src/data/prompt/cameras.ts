@@ -4,7 +4,7 @@ export const cameras: PromptOption[] = [
   {
     label: "Canon R5",
     value: "Canon EOS R5",
-    description: "Fashion editorial sharpness",
+    description: "Nitidez de imagem de moda",
   },
   {
     label: "Sony A7R V",

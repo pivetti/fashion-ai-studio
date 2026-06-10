@@ -100,8 +100,32 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
       subtitle="Biblioteca visual"
       title="Peças e Referencias"
     >
-      <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
-        <Card variant="elevated">
+      <div className="space-y-4 xl:grid xl:grid-cols-[360px_1fr] xl:gap-6 xl:space-y-0">
+        <Card as="details" className="xl:hidden" variant="elevated">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#F4EBDD]">
+            Enviar peça
+            <span className="text-xs text-[#C8A96E]">Abrir</span>
+          </summary>
+          <p className="mt-3 text-sm leading-6 text-[#A9A096]">
+            Suba produto, logo ou inspiracao visual.
+          </p>
+
+          {errorMessage ? (
+            <div className="mt-4 rounded-2xl border border-red-400/30 bg-red-950/35 px-4 py-3 text-sm leading-6 text-red-100">
+              {errorMessage}
+            </div>
+          ) : null}
+
+          {successMessage ? (
+            <div className="mt-4 rounded-2xl border border-emerald-400/30 bg-emerald-950/35 px-4 py-3 text-sm leading-6 text-emerald-100">
+              {successMessage}
+            </div>
+          ) : null}
+
+          <AssetUploadForm action={uploadAsset} assetTypes={uploadAssetTypes} />
+        </Card>
+
+        <Card className="hidden xl:block" variant="elevated">
           <SectionTitle index="01">Entrada de peca</SectionTitle>
           <h2 className="mt-5 font-display text-3xl font-semibold text-[#F4EBDD]">
             Enviar referencia
@@ -127,19 +151,19 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
         </Card>
 
         <Card className="p-0">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <SectionTitle index="02">Biblioteca do studio</SectionTitle>
-            <h2 className="mt-5 font-display text-3xl font-semibold text-[#F4EBDD]">
+            <h2 className="mt-4 font-display text-2xl font-semibold text-[#F4EBDD] sm:mt-5 sm:text-3xl">
               {assets.length} peça{assets.length === 1 ? "" : "s"}
             </h2>
             <p className="mt-3 text-sm text-[#A9A096]">
-              Arquivos de campanha, produto e marca para reutilizar nos
-              editoriais.
+              Arquivos de campanha, produto e marca para reutilizar nas
+              imagens.
             </p>
           </div>
 
           {assets.length > 0 ? (
-            <div className="grid gap-5 p-6 pt-0 md:grid-cols-2 2xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 p-4 pt-0 min-[390px]:grid-cols-2 md:grid-cols-2 md:gap-5 md:p-6 md:pt-0 2xl:grid-cols-3">
               {assets.map((asset) => {
                 const imageUrl =
                   asset.publicUrl && asset.mimeType?.startsWith("image/")
@@ -148,10 +172,10 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
 
                 return (
                   <article
-                    className="overflow-hidden rounded-[1.35rem] border border-[#28241C] bg-[#15130F]"
+                    className="overflow-hidden rounded-2xl border border-[#28241C] bg-[#15130F]"
                     key={asset.id}
                   >
-                    <PreviewFrame className="aspect-[4/3] rounded-b-none border-x-0 border-t-0">
+                    <PreviewFrame className="aspect-square rounded-b-none border-x-0 border-t-0">
                       {imageUrl ? (
                         <Image
                           alt={asset.fileName ?? "Peca"}
@@ -167,7 +191,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
                       )}
                     </PreviewFrame>
 
-                    <div className="space-y-3 p-4">
+                    <div className="space-y-3 p-3 sm:p-4">
                       <div>
                         <Badge tone="neutral">{assetTypeLabels[asset.type]}</Badge>
                         <h3 className="mt-3 line-clamp-2 text-sm font-semibold text-[#F4EBDD]">
@@ -175,7 +199,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
                         </h3>
                       </div>
 
-                      <div className="grid gap-2 text-xs text-[#6F6A63]">
+                      <div className="hidden gap-2 text-xs text-[#6F6A63] sm:grid">
                         <p>Tamanho: {formatBytes(asset.sizeBytes)}</p>
                         <p>Upload: {formatDate(asset.createdAt)}</p>
                       </div>
@@ -185,7 +209,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
                           className={buttonClassName("secondary")}
                           href="/dashboard/generate"
                         >
-                          Usar em novo editorial
+                          Usar
                         </Link>
                         {asset.publicUrl ? (
                           <Link

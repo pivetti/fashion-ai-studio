@@ -81,6 +81,16 @@ type SelectFieldProps = {
   value: string;
 };
 
+type ReferenceAsset = {
+  fileName: string | null;
+  id: string;
+  type: string;
+};
+
+type PromptFormProps = {
+  referenceAssets?: ReferenceAsset[];
+};
+
 function SelectField({ label, onChange, options, value }: SelectFieldProps) {
   return (
     <label className="space-y-2">
@@ -99,7 +109,11 @@ function SelectField({ label, onChange, options, value }: SelectFieldProps) {
   );
 }
 
-export function PromptForm() {
+function getReferenceAssetLabel(asset: ReferenceAsset) {
+  return asset.fileName ?? asset.type;
+}
+
+export function PromptForm({ referenceAssets = [] }: PromptFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(0);
@@ -111,6 +125,7 @@ export function PromptForm() {
   const [pendingAction, setPendingAction] = useState<"image" | "mock" | null>(
     null,
   );
+  const [selectedReferenceAssetId, setSelectedReferenceAssetId] = useState("");
 
   function updateField<T extends keyof FashionPromptInput>(
     field: T,
@@ -180,14 +195,14 @@ export function PromptForm() {
         <div className="space-y-5">
           <div>
             <SectionTitle index="01">Peca</SectionTitle>
-            <h2 className="mt-5 font-display text-3xl font-semibold text-[#F4EBDD]">
-              O que vai para a campanha?
+            <h2 className="mt-4 font-display text-3xl font-semibold text-[#F4EBDD]">
+              Descrição da peça
             </h2>
           </div>
 
           <label className="block space-y-2">
             <span className="text-sm font-medium text-[#F4EBDD]">
-              Roupa ou produto
+              Peça ou produto
             </span>
             <Textarea
               className="min-h-36"
@@ -198,6 +213,43 @@ export function PromptForm() {
               value={input.clothingDesc}
             />
           </label>
+
+          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-[#F4EBDD]">
+                Peça de referência
+              </span>
+              <Select
+                disabled={referenceAssets.length === 0}
+                onChange={(event) =>
+                  setSelectedReferenceAssetId(event.target.value)
+                }
+                value={selectedReferenceAssetId}
+              >
+                <option value="">
+                  {referenceAssets.length > 0
+                    ? "Selecionar peça"
+                    : "Nenhuma peça enviada"}
+                </option>
+                {referenceAssets.map((asset) => (
+                  <option key={asset.id} value={asset.id}>
+                    {getReferenceAssetLabel(asset)}
+                  </option>
+                ))}
+              </Select>
+            </label>
+
+            <Link
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#28241C] bg-[#15130F] px-5 py-2 text-sm font-semibold text-[#E3C98A] transition hover:border-[#5C4724] hover:text-[#F4EBDD]"
+              href="/dashboard/assets"
+            >
+              Enviar peça
+            </Link>
+          </div>
+
+          <p className="text-sm text-[#A9A096]">
+            Use uma peça enviada para orientar a campanha.
+          </p>
 
           <label className="block space-y-2">
             <span className="text-sm font-medium text-[#F4EBDD]">
@@ -441,48 +493,93 @@ export function PromptForm() {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)_minmax(340px,0.82fr)]">
-      <Card className="xl:sticky xl:top-6 xl:self-start" variant="soft">
-        <SectionTitle eyebrow="Workspace">Criar Editorial</SectionTitle>
-        <div className="mt-5">
-          <Stepper
-            currentStep={currentStep}
-            onStepChange={setCurrentStep}
-            steps={steps}
-          />
+    <div className="pb-24 xl:pb-0">
+      <div className="space-y-4 xl:hidden">
+        <Card className="p-4" variant="soft">
+          <SectionTitle eyebrow="Workspace">Criar Imagem</SectionTitle>
+          <div className="mt-4">
+            <Stepper
+              currentStep={currentStep}
+              onStepChange={setCurrentStep}
+              orientation="horizontal"
+              steps={steps}
+            />
+          </div>
+        </Card>
+
+        <div className="sticky top-[76px] z-20">
+          <PromptPreview compact prompt={prompt} />
         </div>
-      </Card>
+      </div>
 
-      <Card as="form" className="space-y-7" onSubmit={handleSubmit}>
-        {renderStepContent()}
+      <div className="mt-4 grid items-start gap-5 xl:mt-0 xl:grid-cols-[260px_minmax(0,1fr)_420px]">
+        <Card
+          className="hidden xl:sticky xl:top-6 xl:block xl:self-start"
+          variant="soft"
+        >
+          <SectionTitle eyebrow="Workspace">Criar Imagem</SectionTitle>
+          <div className="mt-5">
+            <Stepper
+              currentStep={currentStep}
+              onStepChange={setCurrentStep}
+              steps={steps}
+            />
+          </div>
+        </Card>
 
-        <div className="flex flex-col gap-3 border-t border-[#28241C] pt-5 sm:flex-row sm:justify-between">
-          <Button
-            disabled={currentStep === 0}
-            onClick={goToPreviousStep}
-            type="button"
-            variant="ghost"
-          >
-            Voltar
-          </Button>
+        <Card as="form" className="space-y-7" onSubmit={handleSubmit}>
+          {renderStepContent()}
 
-          {currentStep < 3 ? (
-            <Button onClick={goToNextStep} type="button" variant="secondary">
-              Proxima etapa
-            </Button>
-          ) : currentStep === 4 ? (
+          <div className="flex flex-col gap-3 border-t border-[#28241C] pt-5 sm:flex-row sm:justify-between">
             <Button
-              onClick={() => setCurrentStep(3)}
+              disabled={currentStep === 0}
+              onClick={goToPreviousStep}
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              Revisar de novo
+              Voltar
             </Button>
-          ) : null}
-        </div>
-      </Card>
 
-      <PromptPreview prompt={prompt} />
+            {currentStep < 3 ? (
+              <Button onClick={goToNextStep} type="button" variant="secondary">
+                Proxima etapa
+              </Button>
+            ) : currentStep === 4 ? (
+              <Button
+                onClick={() => setCurrentStep(3)}
+                type="button"
+                variant="secondary"
+              >
+                Revisar de novo
+              </Button>
+            ) : null}
+          </div>
+        </Card>
+
+        <div className="hidden xl:block">
+          <PromptPreview prompt={prompt} />
+        </div>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 px-4 xl:hidden">
+        <div className="mx-auto grid max-w-lg grid-cols-[0.8fr_1fr] gap-3 rounded-[1.25rem] border border-[#28241C] bg-[#0F0F0D]/95 p-2 shadow-[0_18px_60px_rgba(0,0,0,0.38)] backdrop-blur">
+          <Button
+            disabled={isPending || pendingAction !== null}
+            onClick={buildAndShowPrompt}
+            type="button"
+            variant="secondary"
+          >
+            Direção
+          </Button>
+          <Button
+            disabled={isPending || pendingAction !== null}
+            onClick={() => handleGeneration("image")}
+            type="button"
+          >
+            {pendingAction === "image" ? "Gerando..." : "Gerar"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -85,15 +85,15 @@ export default async function DashboardPage() {
       subtitle="Studio"
       title="Studio"
     >
-      <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="min-h-[320px] overflow-hidden" variant="elevated">
-          <div className="flex h-full flex-col justify-between gap-8">
+      <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        <Card className="min-h-0 overflow-hidden lg:min-h-[320px]" variant="elevated">
+          <div className="flex h-full flex-col justify-between gap-5 lg:gap-8">
             <div>
               <Badge tone="gold">Campanhas visuais para moda</Badge>
-              <h2 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-tight text-[#F4EBDD] md:text-5xl">
+              <h2 className="mt-4 max-w-3xl font-display text-2xl font-semibold leading-tight text-[#F4EBDD] sm:text-3xl md:text-5xl">
                 {data.organization.name}, seu estudio esta pronto.
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-[#A9A096]">
+              <p className="mt-3 hidden max-w-2xl text-sm leading-6 text-[#A9A096] sm:block">
                 Crie imagens de produto, organize referencias e transforme
                 peças da loja em campanhas com direcao fotografica consistente.
               </p>
@@ -110,15 +110,15 @@ export default async function DashboardPage() {
           </div>
         </Card>
 
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
           <Card variant="soft">
             <p className="text-sm font-medium text-[#A9A096]">
               Creditos disponiveis
             </p>
-            <p className="mt-3 font-display text-6xl font-semibold text-[#E3C98A]">
+            <p className="mt-3 font-display text-4xl font-semibold text-[#E3C98A] lg:text-6xl">
               {data.credits}
             </p>
-            <p className="mt-2 text-sm text-[#6F6A63]">
+            <p className="mt-2 text-xs text-[#6F6A63] sm:text-sm">
               Cada imagem gerada consome 1 credito.
             </p>
           </Card>
@@ -147,9 +147,9 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+      <div className="mt-4 grid gap-4 xl:mt-5 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="p-0">
-          <div className="flex items-center justify-between gap-4 border-b border-[#28241C] p-6">
+          <div className="flex items-center justify-between gap-4 border-b border-[#28241C] p-4 sm:p-6">
             <div>
               <p className="text-sm font-semibold text-[#F4EBDD]">
                 Ultimas imagens
@@ -164,7 +164,7 @@ export default async function DashboardPage() {
           </div>
 
           {recentGenerations.length > 0 ? (
-            <div className="grid gap-4 p-6 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
+            <div className="flex gap-4 overflow-x-auto p-4 sm:grid sm:grid-cols-3 sm:overflow-visible sm:p-6 xl:grid-cols-1 2xl:grid-cols-3">
               {recentGenerations.map((generation) => {
                 const imageUrl =
                   generation.outputAsset?.publicUrl &&
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
 
                 return (
                   <Link
-                    className="group block"
+                    className="group block min-w-[148px] sm:min-w-0"
                     href={`/dashboard/history/${generation.id}`}
                     key={generation.id}
                   >
@@ -208,7 +208,7 @@ export default async function DashboardPage() {
               <EmptyState
                 action={
                   <Link className={buttonClassName("primary")} href="/dashboard/generate">
-                    Criar primeiro editorial
+                    Criar primeira imagem
                   </Link>
                 }
                 description="Monte uma direcao fotografica e salve a primeira campanha da loja."
@@ -219,7 +219,7 @@ export default async function DashboardPage() {
         </Card>
 
         <Card className="p-0">
-          <div className="flex items-center justify-between gap-4 border-b border-[#28241C] p-6">
+          <div className="flex items-center justify-between gap-4 border-b border-[#28241C] p-4 sm:p-6">
             <div>
               <p className="text-sm font-semibold text-[#F4EBDD]">
                 Peças recentes
@@ -234,7 +234,7 @@ export default async function DashboardPage() {
           </div>
 
           {recentAssets.length > 0 ? (
-            <div className="grid gap-4 p-6 sm:grid-cols-2">
+            <div className="flex gap-4 overflow-x-auto p-4 sm:grid sm:grid-cols-2 sm:overflow-visible sm:p-6">
               {recentAssets.map((asset) => {
                 const imageUrl =
                   asset.publicUrl && asset.mimeType?.startsWith("image/")
@@ -243,7 +243,7 @@ export default async function DashboardPage() {
 
                 return (
                   <article
-                    className="grid grid-cols-[88px_1fr] gap-4 rounded-2xl border border-[#28241C] bg-[#15130F] p-3"
+                    className="grid min-w-[240px] grid-cols-[80px_1fr] gap-3 rounded-2xl border border-[#28241C] bg-[#15130F] p-3 sm:min-w-0 sm:grid-cols-[88px_1fr] sm:gap-4"
                     key={asset.id}
                   >
                     <PreviewFrame className="relative aspect-square">
@@ -291,7 +291,7 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="mt-5" variant="soft">
+      <Card className="mt-5 hidden lg:block" variant="soft">
         <div className="grid gap-4 text-sm text-[#A9A096] md:grid-cols-3">
           <p>
             Responsavel:{" "}

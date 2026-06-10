@@ -22,16 +22,16 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
   const errorMessage = getErrorMessage(params.error);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#080807] px-4 py-10 text-[#F4EBDD]">
+    <main className="flex min-h-screen items-center justify-center overflow-x-hidden bg-[#080807] px-4 py-6 text-[#F4EBDD] sm:py-10">
       <section className="w-full max-w-2xl">
-        <div className="mb-8 text-center">
+        <div className="mb-6 text-center sm:mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#C8A96E]">
             Betume Studio
           </p>
-          <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight">
+          <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:mt-4 sm:text-5xl">
             Abra seu studio
           </h1>
-          <p className="mt-4 text-sm leading-6 text-[#A9A096]">
+          <p className="mt-3 hidden text-sm leading-6 text-[#A9A096] sm:block">
             Crie campanhas visuais para sua loja sem ensaio fotografico.
           </p>
         </div>
@@ -39,7 +39,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
         <Card
           as="form"
           action={registerAction}
-          className="grid gap-5 sm:grid-cols-2"
+          className="grid gap-4 sm:grid-cols-2 sm:gap-5"
           variant="soft"
         >
           {errorMessage ? (
