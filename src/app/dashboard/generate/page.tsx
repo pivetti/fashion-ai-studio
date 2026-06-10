@@ -30,23 +30,10 @@ export default async function GeneratePage() {
       activePath="/dashboard/generate"
       credits={data.credits}
       organizationName={data.organization.name}
-      subtitle="Campanha"
+      subtitle="Criar Imagens"
       theme="dark"
-      title="Criar Imagens"
-    >
-      <header className="mb-4 flex flex-col gap-3 border-b border-[#28241C] pb-4 sm:flex-row sm:items-end sm:justify-between lg:mb-5 lg:pb-5">
-        <div>
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-[#F4EBDD] sm:text-3xl">
-            Criar Imagens
-          </h2>
-          <p className="mt-2 text-sm text-[#A9A096]">
-            Monte um editorial com peça, modelo, luz e enquadramento.
-          </p>
-        </div>
-        <Badge className="w-fit" tone="neutral">
-          {data.credits} créditos · 1 por geração
-        </Badge>
-      </header>
+      title="Monte um editorial com peça, modelo, luz e enquadramento."
+    > 
 
       <PromptForm referenceAssets={referenceAssets} />
     </DashboardShell>
