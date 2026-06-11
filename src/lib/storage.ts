@@ -1,8 +1,19 @@
 import { randomUUID } from "crypto";
-import { mkdir, rm, writeFile } from "fs/promises";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
-const UPLOAD_ROOT = path.join(process.cwd(), "public", "uploads");
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const bucketName = process.env.SUPABASE_STORAGE_BUCKET ?? "fashion-assets";
+
+if (!supabaseUrl) {
+  throw new Error("NEXT_PUBLIC_SUPABASE_URL nao configurada.");
+}
+
+if (!supabaseServiceRoleKey) {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY nao configurada.");
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 type SaveFileParams = {
   file: File;
@@ -16,22 +27,9 @@ type SaveBufferParams = {
   organizationId: string;
 };
 
-function assertInsideUploadRoot(filePath: string) {
-  const resolvedRoot = path.resolve(UPLOAD_ROOT);
-  const resolvedPath = path.resolve(filePath);
-
-  if (
-    resolvedPath !== resolvedRoot &&
-    !resolvedPath.startsWith(`${resolvedRoot}${path.sep}`)
-  ) {
-    throw new Error("Caminho de storage invalido.");
-  }
-
-  return resolvedPath;
-}
-
 function getExtensionFromName(fileName?: string) {
-  const extension = path.extname(fileName ?? "").toLowerCase();
+  const match = fileName?.match(/\.[a-zA-Z0-9]+$/);
+  const extension = match?.[0]?.toLowerCase();
 
   if (extension && extension.length <= 10) {
     return extension;
@@ -52,42 +50,39 @@ function getExtensionFromMimeType(mimeType: string) {
   return extensionByMimeType[mimeType] ?? "";
 }
 
-function getStorageKey(organizationId: string, mimeType: string, fileName?: string) {
+function getStorageKey(
+  organizationId: string,
+  mimeType: string,
+  fileName?: string,
+) {
   const extension =
     getExtensionFromName(fileName) || getExtensionFromMimeType(mimeType);
 
   return `${organizationId}/${randomUUID()}${extension}`;
 }
 
-function getExtension(file: File) {
-  const extension = getExtensionFromName(file.name);
-
-  if (extension) {
-    return extension;
-  }
-
-  const extensionByMimeType: Record<string, string> = {
-    "image/gif": ".gif",
-    "image/jpeg": ".jpg",
-    "image/png": ".png",
-    "image/webp": ".webp",
-  };
-
-  return extensionByMimeType[file.type] ?? "";
-}
-
 export function getPublicUrl(storageKey: string) {
-  const normalizedKey = storageKey.replaceAll("\\", "/");
-  return `/uploads/${normalizedKey}`;
+  const { data } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(storageKey);
+
+  return data.publicUrl;
 }
 
 export async function saveFile({ file, organizationId }: SaveFileParams) {
-  const storageKey = `${organizationId}/${randomUUID()}${getExtension(file)}`;
-  const targetPath = assertInsideUploadRoot(path.join(UPLOAD_ROOT, storageKey));
+  const storageKey = getStorageKey(organizationId, file.type, file.name);
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  await mkdir(path.dirname(targetPath), { recursive: true });
-  await writeFile(targetPath, buffer);
+  const { error } = await supabase.storage
+    .from(bucketName)
+    .upload(storageKey, buffer, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(`Erro ao enviar arquivo para o Supabase: ${error.message}`);
+  }
 
   return {
     storageKey,
@@ -102,10 +97,17 @@ export async function saveBuffer({
   organizationId,
 }: SaveBufferParams) {
   const storageKey = getStorageKey(organizationId, mimeType, fileName);
-  const targetPath = assertInsideUploadRoot(path.join(UPLOAD_ROOT, storageKey));
 
-  await mkdir(path.dirname(targetPath), { recursive: true });
-  await writeFile(targetPath, buffer);
+  const { error } = await supabase.storage
+    .from(bucketName)
+    .upload(storageKey, buffer, {
+      contentType: mimeType,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(`Erro ao salvar imagem no Supabase: ${error.message}`);
+  }
 
   return {
     storageKey,
@@ -114,7 +116,11 @@ export async function saveBuffer({
 }
 
 export async function deleteFile(storageKey: string) {
-  const targetPath = assertInsideUploadRoot(path.join(UPLOAD_ROOT, storageKey));
+  const { error } = await supabase.storage
+    .from(bucketName)
+    .remove([storageKey]);
 
-  await rm(targetPath, { force: true });
+  if (error) {
+    throw new Error(`Erro ao remover arquivo do Supabase: ${error.message}`);
+  }
 }
